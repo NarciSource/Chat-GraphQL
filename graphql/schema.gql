@@ -1,0 +1,23 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Message {
+  content: String
+  roomId: String!
+  userId: String!
+}
+
+type Mutation {
+  message(content: String!, roomId: String!, userId: String!): Boolean!
+  typing(roomId: String!, userId: String!): Boolean!
+}
+
+type Query {
+  _empty: String!
+}
+
+type Subscription {
+  message(roomId: String!): Message!
+  typing(roomId: String!): Message!
+}
