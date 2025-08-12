@@ -7,9 +7,8 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { UserGateway } from 'src/domain/user/gateway';
 import { CreateRoomPayload, RoomGateway } from 'src/domain/room/gateway';
-import { ChatGateway, SendMessagePayload } from 'src/domain/chat/gateway';
+import { UserGateway } from 'src/domain/user/gateway';
 
 @WebSocketGateway({
   path: '/chat/ws',
@@ -25,13 +24,11 @@ export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly userGateway: UserGateway,
     private readonly roomGateway: RoomGateway,
-    private readonly chatGateway: ChatGateway,
   ) {}
 
   afterInit() {
     this.userGateway.server = this.server;
     this.roomGateway.server = this.server;
-    this.chatGateway.server = this.server;
 
     console.log('소켓 서버 초기화 완료');
   }
@@ -66,15 +63,5 @@ export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('leave_room')
   async handleLeaveRoom(socket: Socket, payload: { userId: string; roomId: string }) {
     return this.roomGateway.handleLeaveRoom(socket, payload);
-  }
-
-  // chat
-  @SubscribeMessage('send_message')
-  handleSendMessage(socket: Socket, payload: SendMessagePayload) {
-    return this.chatGateway.handleSendMessage(socket, payload);
-  }
-  @SubscribeMessage('typing')
-  handleSendingMessage(socket: Socket, payload: { userId: string; roomId: string }) {
-    return this.chatGateway.handleSendingMessage(socket, payload);
   }
 }
