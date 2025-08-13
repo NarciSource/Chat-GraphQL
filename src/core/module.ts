@@ -5,8 +5,7 @@ import GraphQLModule from 'src/common/graphql.module';
 import { UserGateway } from 'src/domain/user/gateway';
 import { UserService } from 'src/domain/user/service';
 import { UsersController } from 'src/domain/user/controller';
-import { RoomGateway } from 'src/domain/room/gateway';
-import { RoomService } from 'src/domain/room/service';
+import { RoomModule } from 'src/domain/room/module';
 import { ChatModule } from 'src/domain/chat/module';
 import { RepositoryModule } from 'src/repository/module';
 import { HealthCheckController } from './controller';
@@ -20,9 +19,10 @@ import { CoreGateway } from './gateway';
 
     RepositoryModule,
 
-    ChatModule
+    ChatModule,
+    RoomModule,
   ],
   controllers: [UsersController, HealthCheckController],
-  providers: [CoreGateway, RoomGateway, UserGateway, RoomService, UserService],
+  providers: [CoreGateway, UserGateway, UserService],
 })
 export class CoreModule {}

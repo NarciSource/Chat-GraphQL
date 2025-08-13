@@ -7,7 +7,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { CreateRoomPayload, RoomGateway } from 'src/domain/room/gateway';
 import { UserGateway } from 'src/domain/user/gateway';
 
 @WebSocketGateway({
@@ -21,14 +20,10 @@ export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
-  constructor(
-    private readonly userGateway: UserGateway,
-    private readonly roomGateway: RoomGateway,
-  ) {}
+  constructor(private readonly userGateway: UserGateway) {}
 
   afterInit() {
     this.userGateway.server = this.server;
-    this.roomGateway.server = this.server;
 
     console.log('소켓 서버 초기화 완료');
   }
@@ -49,19 +44,5 @@ export class CoreGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('register')
   async handleRegister(socket: Socket, payload: { userId: string }) {
     return this.userGateway.handleRegister(socket, payload);
-  }
-
-  // room
-  @SubscribeMessage('create_room')
-  async handleCreateRoom(socket: Socket, payload: CreateRoomPayload) {
-    return this.roomGateway.handleCreateRoom(socket, payload);
-  }
-  @SubscribeMessage('join_room')
-  async handleJoinRoom(socket: Socket, payload: { userId: string; roomId: string }) {
-    return this.roomGateway.handleJoinRoom(socket, payload);
-  }
-  @SubscribeMessage('leave_room')
-  async handleLeaveRoom(socket: Socket, payload: { userId: string; roomId: string }) {
-    return this.roomGateway.handleLeaveRoom(socket, payload);
   }
 }
