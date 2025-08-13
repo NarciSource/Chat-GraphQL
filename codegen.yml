@@ -1,0 +1,14 @@
+overwrite: true
+schema: ../server/graphql/schema.gql
+generates:
+  src/features/chat/api/generated.ts:
+    documents: src/features/chat/api/**/*.gql
+    plugins:
+      - add:
+          content: /* eslint-disable */
+      - typescript
+      - typescript-operations
+      - typescript-vue-apollo
+    config:
+      withCompositionFunctions: true
+      vueCompositionApiImportFrom: "vue"

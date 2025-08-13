@@ -10,6 +10,7 @@
     "build": "vite build",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
+    "codegen": "graphql-codegen --config codegen.yml",
     "docs": "typedoc",
     "preview": "vite preview",
     "format": "prettier --write ./src",
@@ -17,6 +18,10 @@
     "start": "npm run build && npm run preview"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^6.0.0",
+    "@graphql-codegen/typescript": "^5.0.2",
+    "@graphql-codegen/typescript-operations": "^5.0.2",
+    "@graphql-codegen/typescript-vue-apollo": "^4.1.2",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^24.7.2",
     "@vitejs/plugin-vue": "^6.0.1",
