@@ -23,6 +23,10 @@ export class RoomResolver {
       roomCreated: { roomId, participants: [...participants, hostId] },
     });
 
+    await this.pubSub.publish('system', {
+      system: { roomId, userId: hostId, content: `유저 ${hostId}가 방을 생성했습니다.` },
+    });
+
     return roomId;
   }
 
@@ -36,6 +40,10 @@ export class RoomResolver {
         roomCreated: { roomId, participants },
       });
 
+      await this.pubSub.publish('system', {
+        system: { roomId, userId, content: `유저 ${userId}가 방에 참여했습니다.` },
+      });
+
       console.log(`유저 ${userId}가 방 ${roomId}에 참여했습니다.`);
     }
 
@@ -47,6 +55,10 @@ export class RoomResolver {
     const success = await this.service.leaveRoom(userId, roomId);
 
     if (success) {
+      await this.pubSub.publish('system', {
+        system: { roomId, userId, content: `유저 ${userId}가 방에서 떠났습니다.` },
+      });
+
       console.log(`유저 ${userId}가 방 ${roomId}에서 떠났습니다.`);
     }
 
