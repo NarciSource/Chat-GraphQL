@@ -1,0 +1,6 @@
+subscription onTyping($roomId: String!) {
+  typing(roomId: $roomId) {
+    userId
+    roomId
+  }
+}
