@@ -19,5 +19,11 @@ type Query {
 
 type Subscription {
   message(roomId: String!): Message!
+  system(input: SystemInput!): Message!
   typing(roomId: String!): Message!
+}
+
+input SystemInput {
+  roomId: String
+  userId: String
 }
