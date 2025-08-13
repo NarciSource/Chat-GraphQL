@@ -16,13 +16,8 @@
 import { watchEffect } from "vue";
 
 import { Message, User } from "@/entities/chat/model";
-import { useReceiveMessageSubscription } from "../api/generated";
-import {
-  connected,
-  connect_failed,
-  disconnected,
-  system_message_received,
-} from "../service/event_helper";
+import { useReceiveMessageSubscription, useSystemSubscription } from "../api/generated";
+import { connected, connect_failed, disconnected } from "../service/event_helper";
 import useChatStore from "../store/useChatStore";
 
 const { room, insert_message, alarm_typing } = useChatStore();
@@ -30,6 +25,9 @@ const store = useChatStore();
 
 const { result: message_result } = useReceiveMessageSubscription({
   roomId: room!.id!,
+});
+const { result: system_result } = useSystemSubscription({
+  input: { roomId: room!.id! },
 });
 const { result: typing_result } = useReceiveMessageSubscription({
   roomId: room!.id!,
@@ -46,7 +44,9 @@ watchEffect(() => {
     const received_messaged = new Message(new User(userId!), [content!]);
     insert_message(received_messaged);
 
-    system_message_received(insert_message); // 시스템 메시지 수신
+    const { content: system_content } = system_result.value?.system || {}; // 시스템 메시지 수신
+    const system_message = new Message(new User("System"), [system_content!], true);
+    insert_message(system_message);
 
     const { userId: typingId } = typing_result.value?.message || {}; // 타이핑 이벤트 수신
     alarm_typing(typingId!);
