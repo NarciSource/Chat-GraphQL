@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 
-import { Message } from './model';
+import { Message, SystemInput } from './model';
 
 @Resolver()
 export class ChatResolver {
@@ -44,6 +44,15 @@ export class ChatResolver {
   })
   receiveMessage(@Args('roomId') roomId: string) {
     return this.pubSub.asyncIterableIterator('message');
+  }
+
+  @Subscription(() => Message, {
+    name: 'system',
+    filter: (payload: { system: Message }, { input: { roomId, userId } }: { input: SystemInput }) =>
+      payload.system.roomId === roomId || payload.system.userId === userId,
+  })
+  system(@Args('input') input: SystemInput) {
+    return this.pubSub.asyncIterableIterator('system');
   }
 
   @Subscription(() => Message, {
