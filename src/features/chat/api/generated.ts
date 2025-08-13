@@ -53,6 +53,7 @@ export type Query = {
 export type Subscription = {
   __typename?: 'Subscription';
   message: Message;
+  system: Message;
   typing: Message;
 };
 
@@ -62,8 +63,18 @@ export type SubscriptionMessageArgs = {
 };
 
 
+export type SubscriptionSystemArgs = {
+  input: SystemInput;
+};
+
+
 export type SubscriptionTypingArgs = {
   roomId: Scalars['String']['input'];
+};
+
+export type SystemInput = {
+  roomId?: InputMaybe<Scalars['String']['input']>;
+  userId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SendMessageMutationVariables = Exact<{
@@ -96,6 +107,13 @@ export type ReceiveMessageSubscriptionVariables = Exact<{
 
 
 export type ReceiveMessageSubscription = { __typename?: 'Subscription', message: { __typename?: 'Message', userId: string, content?: string | null } };
+
+export type SystemSubscriptionVariables = Exact<{
+  input: SystemInput;
+}>;
+
+
+export type SystemSubscription = { __typename?: 'Subscription', system: { __typename?: 'Message', roomId: string, userId: string, content?: string | null } };
 
 
 export const SendMessageDocument = gql`
@@ -211,3 +229,32 @@ export function useReceiveMessageSubscription(variables: ReceiveMessageSubscript
   return VueApolloComposable.useSubscription<ReceiveMessageSubscription, ReceiveMessageSubscriptionVariables>(ReceiveMessageDocument, variables, options);
 }
 export type ReceiveMessageSubscriptionCompositionFunctionResult = VueApolloComposable.UseSubscriptionReturn<ReceiveMessageSubscription, ReceiveMessageSubscriptionVariables>;
+export const SystemDocument = gql`
+    subscription System($input: SystemInput!) {
+  system(input: $input) {
+    roomId
+    userId
+    content
+  }
+}
+    `;
+
+/**
+ * __useSystemSubscription__
+ *
+ * To run a query within a Vue component, call `useSystemSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSystemSubscription` returns an object from Apollo Client that contains result, loading and error properties
+ * you can use to render your UI.
+ *
+ * @param variables that will be passed into the subscription
+ * @param options that will be passed into the subscription, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/subscription.html#options;
+ *
+ * @example
+ * const { result, loading, error } = useSystemSubscription({
+ *   input: // value for 'input'
+ * });
+ */
+export function useSystemSubscription(variables: SystemSubscriptionVariables | VueCompositionApi.Ref<SystemSubscriptionVariables> | ReactiveFunction<SystemSubscriptionVariables>, options: VueApolloComposable.UseSubscriptionOptions<SystemSubscription, SystemSubscriptionVariables> | VueCompositionApi.Ref<VueApolloComposable.UseSubscriptionOptions<SystemSubscription, SystemSubscriptionVariables>> | ReactiveFunction<VueApolloComposable.UseSubscriptionOptions<SystemSubscription, SystemSubscriptionVariables>> = {}) {
+  return VueApolloComposable.useSubscription<SystemSubscription, SystemSubscriptionVariables>(SystemDocument, variables, options);
+}
+export type SystemSubscriptionCompositionFunctionResult = VueApolloComposable.UseSubscriptionReturn<SystemSubscription, SystemSubscriptionVariables>;
