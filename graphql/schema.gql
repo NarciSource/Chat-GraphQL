@@ -9,6 +9,9 @@ type Message {
 }
 
 type Mutation {
+  createRoom(hostId: String!, participants: [String!]!): String!
+  joinRoom(roomId: String!, userId: String!): Boolean!
+  leaveRoom(roomId: String!, userId: String!): Boolean!
   message(content: String!, roomId: String!, userId: String!): Boolean!
   typing(roomId: String!, userId: String!): Boolean!
 }
@@ -17,8 +20,14 @@ type Query {
   _empty: String!
 }
 
+type Room {
+  participants: [String!]!
+  roomId: String!
+}
+
 type Subscription {
   message(roomId: String!): Message!
+  roomCreated(userId: String!): Room!
   system(input: SystemInput!): Message!
   typing(roomId: String!): Message!
 }
