@@ -6,15 +6,19 @@
 import { storeToRefs } from "pinia";
 
 import { Room } from "@/entities/chat/model";
+import { useLeaveRoomMutation } from "../api/generated";
 import useRoomStore from "../store/useRoomStore";
-import { leave_room } from "../service/event_helper";
 
 const { current_user, rooms, selected_room } = storeToRefs(useRoomStore());
 const { room } = defineProps<{ room: Room }>();
+const { mutate: leave_room } = useLeaveRoomMutation();
 
 const leave = () => {
   // 방 나가기
-  leave_room(current_user.value!, room);
+  leave_room({
+    userId: current_user.value!.id,
+    roomId: room.id,
+  });
 
   // 방 목록에서 제거
   rooms.value.delete(room.id);
