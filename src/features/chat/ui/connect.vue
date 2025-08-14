@@ -16,7 +16,7 @@
 import { watchEffect } from "vue";
 
 import { Message, User } from "@/entities/chat/model";
-import { useReceiveMessageSubscription, useSystemSubscription } from "../api/generated";
+import { useReceiveMessageSubscription, useSystemSubscription } from "../api/hooks";
 import { connected, connect_failed, disconnected } from "../service/event_helper";
 import useChatStore from "../store/useChatStore";
 

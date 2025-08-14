@@ -10,7 +10,7 @@ import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 
 import useChatStore from "../store/useChatStore";
-import { useSendMessageMutation, useSendTypingMutation } from "../api/generated";
+import { useSendMessageMutation, useSendTypingMutation } from "../api/hooks";
 
 // 반응형 변수
 const message_input = ref("");

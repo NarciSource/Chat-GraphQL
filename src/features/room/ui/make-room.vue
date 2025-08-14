@@ -15,7 +15,7 @@ import { storeToRefs } from "pinia";
 import UserListPopup from "@/features/user-presence/index.vue";
 import { Room, User } from "@/entities/chat/model";
 import useRoomStore from "../store/useRoomStore";
-import { useCreateRoomMutation, useRoomCreatedSubscription } from "../api/generated";
+import { useCreateRoomMutation, useRoomCreatedSubscription } from "../api/hooks";
 
 const { connecting, current_user, rooms, selected_room } = storeToRefs(useRoomStore());
 const { mutate: make_room } = useCreateRoomMutation();

@@ -6,7 +6,7 @@
 import { storeToRefs } from "pinia";
 
 import { Room } from "@/entities/chat/model";
-import { useLeaveRoomMutation } from "../api/generated";
+import { useLeaveRoomMutation } from "../api/hooks";
 import useRoomStore from "../store/useRoomStore";
 
 const { current_user, rooms, selected_room } = storeToRefs(useRoomStore());
