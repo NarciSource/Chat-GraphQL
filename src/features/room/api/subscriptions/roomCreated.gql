@@ -1,0 +1,6 @@
+subscription roomCreated($userId: String!) {
+  roomCreated(userId: $userId) {
+    participants
+    roomId
+  }
+}
