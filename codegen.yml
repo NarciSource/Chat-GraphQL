@@ -12,3 +12,15 @@ generates:
     config:
       withCompositionFunctions: true
       vueCompositionApiImportFrom: "vue"
+
+  src/features/room/api/generated.ts:
+    documents: src/features/room/api/**/*.gql
+    plugins:
+      - add:
+          content: /* eslint-disable */
+      - typescript
+      - typescript-operations
+      - typescript-vue-apollo
+    config:
+      withCompositionFunctions: true
+      vueCompositionApiImportFrom: "vue"

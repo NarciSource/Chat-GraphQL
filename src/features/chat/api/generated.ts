@@ -28,8 +28,29 @@ export type Message = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createRoom: Scalars['String']['output'];
+  joinRoom: Scalars['Boolean']['output'];
+  leaveRoom: Scalars['Boolean']['output'];
   message: Scalars['Boolean']['output'];
   typing: Scalars['Boolean']['output'];
+};
+
+
+export type MutationCreateRoomArgs = {
+  hostId: Scalars['String']['input'];
+  participants: Array<Scalars['String']['input']>;
+};
+
+
+export type MutationJoinRoomArgs = {
+  roomId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
+};
+
+
+export type MutationLeaveRoomArgs = {
+  roomId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 
@@ -50,9 +71,16 @@ export type Query = {
   _empty: Scalars['String']['output'];
 };
 
+export type Room = {
+  __typename?: 'Room';
+  participants: Array<Scalars['String']['output']>;
+  roomId: Scalars['String']['output'];
+};
+
 export type Subscription = {
   __typename?: 'Subscription';
   message: Message;
+  roomCreated: Room;
   system: Message;
   typing: Message;
 };
@@ -60,6 +88,11 @@ export type Subscription = {
 
 export type SubscriptionMessageArgs = {
   roomId: Scalars['String']['input'];
+};
+
+
+export type SubscriptionRoomCreatedArgs = {
+  userId: Scalars['String']['input'];
 };
 
 
