@@ -10,25 +10,31 @@ export class RedisRepository implements IRepository {
     private readonly redis: RedisClientType,
   ) {}
 
-  // (1) userSocketMap 관련
-  async setUserSocket(userId: string, socketId: string) {
-    await this.redis.hSet('userSocketMap', userId, socketId);
+  // key helpers
+  private userKey(userId: string) {
+    return `user:${userId}:rooms`;
   }
 
-  async getUserSocketByUserId(userId: string): Promise<string | undefined> {
-    const socketId = (await this.redis.hGet('userSocketMap', userId)) as string;
-    return socketId || undefined;
+  private roomKey(roomId: string) {
+    return `room:${roomId}:users`;
   }
 
-  async hasUserSocket(userId: string): Promise<boolean> {
-    // redis.hExists()가 없으므로, hGet으로 체크
-    const socketId = await this.redis.hGet('userSocketMap', userId);
-    return !!socketId;
+  // user
+  async setUser(userId: string) {
+    await this.redis.exists(this.userKey(userId));
   }
 
-  async removeUserSocket(userId: string): Promise<void> {
-    await this.redis.hDel('userSocketMap', userId);
+  async hasUser(userId: string) {
+    return (await this.redis.exists(this.userKey(userId))) === 1;
+  }
 
+  async getUsers() {
+    const keys = await this.scanKeys('user:*:rooms');
+
+    return keys.map((k) => k.split(':')[1]);
+  }
+
+  async removeUser(userId: string) {
     const userKey = this.userKey(userId);
     const rooms = await this.redis.sMembers(userKey);
 
@@ -39,35 +45,11 @@ export class RedisRepository implements IRepository {
     await this.redis.del(userKey);
   }
 
-  async findUserIdBySocketId(socketId: string): Promise<string | undefined> {
-    // Hash 전체 스캔 (데이터 많으면 비효율적)
-    const entries = await this.redis.hGetAll('userSocketMap');
-    for (const [uId, sId] of Object.entries(entries)) {
-      if (sId == socketId) {
-        return uId;
-      }
-    }
-    return undefined;
-  }
-
-  async getUserKeys(): Promise<string[]> {
-    return this.redis.hKeys('userSocketMap');
-  }
-
-  // key helpers
-  private userKey(userId: string) {
-    return `user:${userId}:rooms`;
-  }
-
-  private roomKey(roomId: string) {
-    return `room:${roomId}:users`;
-  }
-
-  // (2) userRoomsMap, roomMembersMap 관련
   async getRoomsByUser(userId: string) {
     return this.redis.sMembers(this.userKey(userId));
   }
 
+  //room
   async getRooms() {
     const keys = await this.scanKeys('room:*:users');
 
@@ -88,6 +70,7 @@ export class RedisRepository implements IRepository {
     }
   }
 
+  // user-room
   async getRoomMembers(roomId: string) {
     return await this.redis.sMembers(this.roomKey(roomId));
   }
