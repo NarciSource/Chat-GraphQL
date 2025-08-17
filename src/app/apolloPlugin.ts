@@ -13,6 +13,8 @@ import { Kind, OperationTypeNode } from "graphql";
 import { createClient } from "graphql-ws";
 import { App } from "vue";
 
+import { setApolloClient } from "@/shared/lib/apolloClient";
+
 const HTTP_SERVER_URL = import.meta.env.VITE_GRAPHQL_SERVER_URL;
 const WS_SERVER_URL = HTTP_SERVER_URL.replace(/^http:\/\//, "ws://").replace(
   /^https:\/\//,
@@ -45,6 +47,8 @@ export const apolloClient = new ApolloClient<NormalizedCacheObject>({
 
   cache: new InMemoryCache(),
 });
+
+setApolloClient(apolloClient);
 
 // vue 플러그인
 export default {

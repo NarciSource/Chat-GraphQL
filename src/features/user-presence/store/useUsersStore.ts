@@ -1,9 +1,9 @@
 import { defineStore } from "pinia";
 import { onUnmounted, ref } from "vue";
 
-import { apolloClient } from "@/app/apolloPlugin";
 import User from "@/entities/chat/model/User";
 import { dto_to_user } from "@/entities/chat/service/mapper/user";
+import { apolloClient } from "@/shared/lib/apolloClient";
 import { UserPresenceDocument } from "../api/hooks";
 
 export default defineStore("users", () => {

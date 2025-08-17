@@ -5,8 +5,8 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 
-import getUser from "@/shared/lib/getUser";
 import { User } from "@/entities/chat/model";
+import getUser from "@/shared/lib/getUser";
 import useUserStore from "../store/useUserStore";
 import { useSetUserMutation } from "../api/hooks";
 import manualRegister from "./manual-register.vue";
