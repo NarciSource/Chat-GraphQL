@@ -54,11 +54,7 @@ export class RoomService {
     }
 
     await this.repository.removeRoomToUser(userId, roomId);
-    return true;
-  }
 
-  // userId로 소켓 찾기
-  async getSocketId(userId: string): Promise<string | undefined> {
-    return this.repository.getUserSocketByUserId(userId);
+    return true;
   }
 }

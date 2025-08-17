@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 
 import { Message, SystemInput } from './model';
@@ -6,12 +6,6 @@ import { Message, SystemInput } from './model';
 @Resolver()
 export class ChatResolver {
   private pubSub = new PubSub();
-
-  // Queries
-  @Query(() => String, { name: '_empty' })
-  emptyQuery(): string {
-    return 'ok';
-  }
 
   // Mutations
   @Mutation(() => Boolean, { name: 'message' })
