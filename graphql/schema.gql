@@ -13,11 +13,12 @@ type Mutation {
   joinRoom(roomId: String!, userId: String!): Boolean!
   leaveRoom(roomId: String!, userId: String!): Boolean!
   message(content: String!, roomId: String!, userId: String!): Boolean!
+  setUser(id: String!): Boolean!
   typing(roomId: String!, userId: String!): Boolean!
 }
 
 type Query {
-  _empty: String!
+  getUsers: [String!]!
 }
 
 type Room {
@@ -30,6 +31,7 @@ type Subscription {
   roomCreated(userId: String!): Room!
   system(input: SystemInput!): Message!
   typing(roomId: String!): Message!
+  userPresence: [String!]!
 }
 
 input SystemInput {
