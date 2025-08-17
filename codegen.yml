@@ -25,6 +25,24 @@ generates:
     plugins:
       - typescript-operations
 
+  src/features/user-auth/api/operations.ts:
+    documents: src/features/user-auth/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: "@/shared/api/types"
+      importTypesNamespace: SchemaTypes
+    plugins:
+      - typescript-operations
+
+  src/features/user-presence/api/operations.ts:
+    documents: src/features/user-presence/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: "@/shared/api/types"
+      importTypesNamespace: SchemaTypes
+    plugins:
+      - typescript-operations
+
   # vue-apollo 훅
   src/features/chat/api/hooks.ts:
     documents: src/features/chat/api/**/*.gql
@@ -40,6 +58,30 @@ generates:
 
   src/features/room/api/hooks.ts:
     documents: src/features/room/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: ./operations
+      importTypesNamespace: Ops
+    plugins:
+      - typescript-vue-apollo
+    config:
+      withCompositionFunctions: true
+      vueCompositionApiImportFrom: "vue"
+
+  src/features/user-auth/api/hooks.ts:
+    documents: src/features/user-auth/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: ./operations
+      importTypesNamespace: Ops
+    plugins:
+      - typescript-vue-apollo
+    config:
+      withCompositionFunctions: true
+      vueCompositionApiImportFrom: "vue"
+
+  src/features/user-presence/api/hooks.ts:
+    documents: src/features/user-presence/api/**/*.gql
     preset: import-types
     presetConfig:
       typesPath: ./operations
