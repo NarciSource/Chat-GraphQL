@@ -13,24 +13,37 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from "vue";
+import { watch, watchEffect } from "vue";
+import { storeToRefs } from "pinia";
 
 import { Message, User } from "@/entities/chat/model";
-import { useReceiveMessageSubscription, useSystemSubscription } from "../api/hooks";
+import {
+  useOnTypingSubscription,
+  useReceiveMessageSubscription,
+  useSystemSubscription,
+} from "../api/hooks";
 import { connected, connect_failed, disconnected } from "../service/event_helper";
 import useChatStore from "../store/useChatStore";
 
-const { room, insert_message, alarm_typing } = useChatStore();
+const { room } = storeToRefs(useChatStore());
+const { insert_message, alarm_typing } = useChatStore();
 const store = useChatStore();
 
-const { result: message_result } = useReceiveMessageSubscription({
-  roomId: room!.id!,
-});
-const { result: system_result } = useSystemSubscription({
-  input: { roomId: room!.id! },
-});
-const { result: typing_result } = useReceiveMessageSubscription({
-  roomId: room!.id!,
+const { result: message_result } = useReceiveMessageSubscription(() => ({
+  roomId: room.value!.id!,
+}));
+const { result: system_result } = useSystemSubscription(() => ({
+  input: { roomId: room!.value!.id! },
+}));
+const { result: typing_result } = useOnTypingSubscription(() => ({
+  roomId: room!.value!.id!,
+}));
+
+// room 변경 시 이전 메시지 결과 초기화
+watch(room, () => {
+  message_result.value = undefined;
+  system_result.value = undefined;
+  typing_result.value = undefined;
 });
 
 watchEffect(() => {
@@ -48,7 +61,8 @@ watchEffect(() => {
     const system_message = new Message(new User("System"), [system_content!], true);
     insert_message(system_message);
 
-    const { userId: typingId } = typing_result.value?.message || {}; // 타이핑 이벤트 수신
+    // 타이핑 이벤트 수신
+    const { userId: typingId } = typing_result.value?.typing || {};
     alarm_typing(typingId!);
   }
 });
