@@ -46,24 +46,35 @@ watch(room, () => {
   typing_result.value = undefined;
 });
 
+// 일반 메시지 수신
+watch(message_result, (result) => {
+  if (!result) return;
+
+  const { userId, content } = result.message;
+  insert_message(new Message(new User(userId), [content ?? ""]));
+});
+
+// 시스템 메시지 수신
+watch(system_result, (result) => {
+  if (!result) return;
+
+  const { content } = result.system;
+  insert_message(new Message(new User("System"), [content ?? ""]));
+});
+
+// 타이핑 이벤트 수신
+watch(typing_result, (result) => {
+  if (!result) return;
+
+  alarm_typing(result.typing.userId!);
+});
+
 watchEffect(() => {
   if (store.connecting) {
     // 소켓 이벤트 리스너 등록
     connected(() => (store.connecting = true)); // 연결 성공
     connect_failed(() => (store.connecting = false)); // 연결 실패
     disconnected(() => (store.connecting = false)); // 연결 종료
-
-    const { userId, content } = message_result.value?.message || {}; // 일반 메시지 수신
-    const received_messaged = new Message(new User(userId!), [content!]);
-    insert_message(received_messaged);
-
-    const { content: system_content } = system_result.value?.system || {}; // 시스템 메시지 수신
-    const system_message = new Message(new User("System"), [system_content!], true);
-    insert_message(system_message);
-
-    // 타이핑 이벤트 수신
-    const { userId: typingId } = typing_result.value?.typing || {};
-    alarm_typing(typingId!);
   }
 });
 </script>
