@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from "vue";
+import { watch } from "vue";
 import { storeToRefs } from "pinia";
 
 import UserListPopup from "@/features/user-presence/index.vue";
@@ -17,7 +17,7 @@ import { Room, User } from "@/entities/chat/model";
 import useRoomStore from "../store/useRoomStore";
 import { useCreateRoomMutation, useRoomCreatedSubscription } from "../api/hooks";
 
-const { connecting, current_user, rooms, selected_room } = storeToRefs(useRoomStore());
+const { current_user, rooms, selected_room } = storeToRefs(useRoomStore());
 const { mutate: make_room } = useCreateRoomMutation();
 
 // 다대다 채팅으로 방 생성하고 초대
@@ -28,23 +28,23 @@ const make = (selected_users: User[]) => {
   });
 };
 
-const { result: room_result } = useRoomCreatedSubscription({ userId: current_user.value!.id });
+const { result: room_result } = useRoomCreatedSubscription(
+  () => ({ userId: current_user.value?.id ?? "" }),
+  () => ({ enabled: !!current_user.value }),
+);
 
-watchEffect(() => {
-  if (connecting.value) {
-    // 방 생성 후의 이벤트 리스너 등록
-    if (room_result.value) {
-      const { roomId, participants } = room_result.value.roomCreated;
+watch(room_result, (result) => {
+  if (!result) return;
 
-      const room = new Room(
-        roomId,
-        participants.map((name) => new User(name)),
-      );
+  const { roomId, participants } = result.roomCreated;
 
-      rooms.value.set(roomId, room); // 방 정보 업데이트
-      selected_room.value = room; // 선택 방 업데이트
-    }
-  }
+  const room = new Room(
+    roomId,
+    participants.map((name) => new User(name)),
+  );
+
+  rooms.value.set(roomId, room); // 방 정보 업데이트
+  selected_room.value = room; // 선택 방 업데이트
 });
 </script>
 
