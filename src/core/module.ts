@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import GraphQLModule from 'src/common/graphql.module';
+import { PubSubModule } from 'src/common/pubsub.module';
 import { UserModule } from 'src/domain/user/module';
 import { RoomModule } from 'src/domain/room/module';
 import { ChatModule } from 'src/domain/chat/module';
@@ -13,6 +14,7 @@ import { HealthCheckController } from './controller';
     ConfigModule.forRoot({ isGlobal: true }),
 
     GraphQLModule,
+    PubSubModule,
 
     RepositoryModule,
 

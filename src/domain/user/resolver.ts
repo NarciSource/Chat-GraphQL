@@ -1,13 +1,15 @@
+import { Inject } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
-import { PubSub } from 'graphql-subscriptions';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { UserService } from './service';
 
 @Resolver()
 export class UserResolver {
-  private pubSub = new PubSub();
-
-  constructor(private readonly service: UserService) {}
+  constructor(
+    @Inject('PUB_SUB') private pubSub: RedisPubSub,
+    private readonly service: UserService,
+  ) {}
 
   // Queries
   @Query(() => [String], { name: 'getUsers' })
@@ -30,6 +32,6 @@ export class UserResolver {
   // Subscriptions
   @Subscription(() => [String], { name: 'userPresence' })
   userPresence() {
-    return this.pubSub.asyncIterableIterator('userPresence');
+    return this.pubSub.asyncIterator('userPresence');
   }
 }

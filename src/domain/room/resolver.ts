@@ -1,14 +1,16 @@
+import { Inject } from '@nestjs/common';
 import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
-import { PubSub } from 'graphql-subscriptions';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { Room } from './model';
 import { RoomService } from './service';
 
 @Resolver()
 export class RoomResolver {
-  private pubSub = new PubSub();
-
-  constructor(private readonly service: RoomService) {}
+  constructor(
+    @Inject('PUB_SUB') private pubSub: RedisPubSub,
+    private readonly service: RoomService,
+  ) {}
 
   // mutations
   @Mutation(() => String, { name: 'createRoom' })
@@ -72,6 +74,6 @@ export class RoomResolver {
       payload.roomCreated.participants.includes(userId),
   })
   roomCreated(@Args('userId') userId: string) {
-    return this.pubSub.asyncIterableIterator('roomCreated');
+    return this.pubSub.asyncIterator('roomCreated');
   }
 }

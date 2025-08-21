@@ -1,11 +1,12 @@
+import { Inject } from '@nestjs/common';
 import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
-import { PubSub } from 'graphql-subscriptions';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { Message, SystemInput } from './model';
 
 @Resolver()
 export class ChatResolver {
-  private pubSub = new PubSub();
+  constructor(@Inject('PUB_SUB') private pubSub: RedisPubSub) {}
 
   // Mutations
   @Mutation(() => Boolean, { name: 'message' })
@@ -37,7 +38,7 @@ export class ChatResolver {
       payload.message.roomId === roomId,
   })
   receiveMessage(@Args('roomId') roomId: string) {
-    return this.pubSub.asyncIterableIterator('message');
+    return this.pubSub.asyncIterator('message');
   }
 
   @Subscription(() => Message, {
@@ -46,7 +47,7 @@ export class ChatResolver {
       payload.system.roomId === roomId || payload.system.userId === userId,
   })
   system(@Args('input') input: SystemInput) {
-    return this.pubSub.asyncIterableIterator('system');
+    return this.pubSub.asyncIterator('system');
   }
 
   @Subscription(() => Message, {
@@ -55,6 +56,6 @@ export class ChatResolver {
       payload.typing.roomId === roomId,
   })
   onTyping(@Args('roomId') roomId: string) {
-    return this.pubSub.asyncIterableIterator('typing');
+    return this.pubSub.asyncIterator('typing');
   }
 }
