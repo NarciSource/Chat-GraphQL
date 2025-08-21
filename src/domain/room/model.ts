@@ -8,3 +8,5 @@ export class Room {
   @Field(() => [String])
   participants: string[];
 }
+
+export type RoomPayload = { roomCreated: Room };

@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-import { Room } from './model';
+import { Room, RoomPayload } from './model';
 import { RoomService } from './service';
 
 @Resolver()
@@ -38,7 +38,7 @@ export class RoomResolver {
 
     if (success) {
       // 생성된 roomId를 모든 room 참가자에게 알림
-      await this.pubSub.publish('roomCreated', {
+      await this.pubSub.publish<RoomPayload>('roomCreated', {
         roomCreated: { roomId, participants },
       });
 
@@ -70,10 +70,10 @@ export class RoomResolver {
   // subscriptions
   @Subscription(() => Room, {
     name: 'roomCreated',
-    filter: (payload: { roomCreated: Room }, { userId }: { userId: string }) =>
+    filter: (payload: RoomPayload, { userId }: { userId: string }) =>
       payload.roomCreated.participants.includes(userId),
   })
   roomCreated(@Args('userId') userId: string) {
-    return this.pubSub.asyncIterator('roomCreated');
+    return this.pubSub.asyncIterator<RoomPayload>('roomCreated');
   }
 }

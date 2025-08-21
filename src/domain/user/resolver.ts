@@ -3,6 +3,7 @@ import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { UserService } from './service';
+import { UserPresencePayload } from './model';
 
 @Resolver()
 export class UserResolver {
@@ -22,7 +23,7 @@ export class UserResolver {
   async setUser(@Args('id') id: string) {
     await this.service.registerUser(id);
 
-    await this.pubSub.publish('userPresence', {
+    await this.pubSub.publish<UserPresencePayload>('userPresence', {
       userPresence: await this.service.getUsers(),
     });
 
@@ -32,6 +33,6 @@ export class UserResolver {
   // Subscriptions
   @Subscription(() => [String], { name: 'userPresence' })
   userPresence() {
-    return this.pubSub.asyncIterator('userPresence');
+    return this.pubSub.asyncIterator<UserPresencePayload>('userPresence');
   }
 }

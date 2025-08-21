@@ -20,3 +20,7 @@ export class SystemInput {
   @Field({ nullable: true })
   roomId?: string;
 }
+
+export type MessagePayload = { message: Message };
+export type SystemPayload = { system: Message };
+export type TypingPayload = { typing: Message };

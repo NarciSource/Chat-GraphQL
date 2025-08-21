@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-import { Message, SystemInput } from './model';
+import { Message, MessagePayload, SystemInput, SystemPayload, TypingPayload } from './model';
 
 @Resolver()
 export class ChatResolver {
@@ -15,7 +15,7 @@ export class ChatResolver {
     @Args('userId') userId: string,
     @Args('content') content: string,
   ) {
-    await this.pubSub.publish('message', {
+    await this.pubSub.publish<MessagePayload>('message', {
       message: { roomId, userId, content },
     });
 
@@ -24,7 +24,7 @@ export class ChatResolver {
 
   @Mutation(() => Boolean, { name: 'typing' })
   async typing(@Args('roomId') roomId: string, @Args('userId') userId: string) {
-    await this.pubSub.publish('typing', {
+    await this.pubSub.publish<TypingPayload>('typing', {
       typing: { roomId, userId },
     });
 
@@ -34,28 +34,28 @@ export class ChatResolver {
   // Subscriptions
   @Subscription(() => Message, {
     name: 'message',
-    filter: (payload: { message: Message }, { roomId }: { roomId: string }) =>
+    filter: (payload: MessagePayload, { roomId }: { roomId: string }) =>
       payload.message.roomId === roomId,
   })
   receiveMessage(@Args('roomId') roomId: string) {
-    return this.pubSub.asyncIterator('message');
+    return this.pubSub.asyncIterator<MessagePayload>('message');
   }
 
   @Subscription(() => Message, {
     name: 'system',
-    filter: (payload: { system: Message }, { input: { roomId, userId } }: { input: SystemInput }) =>
+    filter: (payload: SystemPayload, { input: { roomId, userId } }: { input: SystemInput }) =>
       payload.system.roomId === roomId || payload.system.userId === userId,
   })
   system(@Args('input') input: SystemInput) {
-    return this.pubSub.asyncIterator('system');
+    return this.pubSub.asyncIterator<SystemPayload>('system');
   }
 
   @Subscription(() => Message, {
     name: 'typing',
-    filter: (payload: { typing: Message }, { roomId }: { roomId: string }) =>
+    filter: (payload: TypingPayload, { roomId }: { roomId: string }) =>
       payload.typing.roomId === roomId,
   })
   onTyping(@Args('roomId') roomId: string) {
-    return this.pubSub.asyncIterator('typing');
+    return this.pubSub.asyncIterator<TypingPayload>('typing');
   }
 }
