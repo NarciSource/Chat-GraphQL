@@ -8,17 +8,11 @@ import { createClient } from 'redis';
     {
       provide: 'REDIS_CLIENT',
       useFactory: async (configService: ConfigService) => {
-        const repositoryType = configService.get<string>('REPOSITORY_TYPE');
         const host = configService.get<string>('REDIS_HOST', 'localhost');
         const port = configService.get<number>('REDIS_PORT', 6379);
+        const url = `redis://${host}:${port}`;
 
-        if (repositoryType !== 'redis') {
-          return null;
-        }
-
-        const client = createClient({
-          url: `redis://${host}:${port}`,
-        });
+        const client = createClient({ url });
         client.on('connect', () => console.log('[RedisModule] Redis client connected'));
         client.on('error', (err) => console.error('Redis Client Error', err));
 

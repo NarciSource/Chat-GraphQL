@@ -1,100 +1,87 @@
-# Socket.io 채팅 서비스 백엔드
+# GraphQL 채팅 서비스 백엔드
 
 ## 🛠️ 기술 스택
 
-[![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=socketdotio&logoColor=white)](https://socket.io/)  
+[![GraphQL](https://img.shields.io/badge/GraphQL-E10098?style=flat-square&logo=graphql&logoColor=white)](https://graphql.org/)  
+[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![Apollo](https://img.shields.io/badge/Apollo-311C87?style=flat-square&logo=apollographql&logoColor=white)](https://www.apollographql.com/)
+[![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/ko)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  
 [![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io)  
-[![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/) [![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/ko) [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  
-[![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)](https://eslint.org/) [![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=prettier&logoColor=black)](https://prettier.io/)
+[![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)](https://eslint.org/)
+[![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=prettier&logoColor=black)](https://prettier.io/)
+[![Voyager](https://img.shields.io/badge/🛰️_Voyager-548f9e?style=flat-square&logoColor=white)](https://github.com/APIs-guru/graphql-voyager)  
+[![Docker Compose](https://img.shields.io/badge/Docker_Compose-2AB4FF.svg?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjMgNjY1Ij4KICA8cGF0aCBmaWxsPSIjZmNmY2ZjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00MTggMWMtNiAxLTkgMy0xMyA4LTQgMy00IDMtMTAgMS0xMi02LTYwIDAtNjYgOC01IDYtMTEgNDQtOCA1MGwyMyAxN2M3IDQgNyA2IDIgNy0yMyAzLTM3IDI5LTI5IDUyIDMgOSAzIDktMTAgNi0xOS01LTI0LTYtNDUtNS00NyAwLTg2IDE4LTEwOSA1MGExMzUgMTM1IDAgMCAwLTI0IDY0Yy0zIDI4IDIgNDggMTcgNzJsMjIgMjdjNDAgNDQgNDEgNjYgMyA5MS00NSAzMC0xMDQgMTktMTA2LTIwLTEtMTYgNC0yOSAxNy01MiAxMy0yNCAxNC0zMyAzLTUybDEzLThjMjQtMTIgMjItOSAyMy0zNCAwLTIyIDItMjAtMjMtMzAtMTgtNi0yMC02LTQwLTEtMjggOS00MCAxNC00MSAxOCAwIDItMSAzLTIgMy03IDAtMTQgMTItMTUgMjUtMSAyMSA2IDI5IDMwIDM2IDMwIDkgMzUgMjQgMTkgNDktMzYgNTMtMzIgMTAyIDExIDEyMSAzNSAxNiA3NCAxMyAxMTktOWwxMS01IDMgMzJjMCAzNC00MCAzOC04OSA4bC0xNi0xMGMtNTEtMjktMTAyIDI0LTY2IDcwIDE1IDIwIDQyIDIxIDQ2IDIgMi04IDAtMTEtMTAtMTktMTYtMTItMTctMjQtMi0yNyA1LTEgMjYgOCAyOCAxMmwzNCAyOSAyMCAxMiAyMCA4YzM2IDEzIDgyLTE1IDgyLTUwIDAtMTAgMC0xMCA2LTUgMTAgMTAgMTggMTYgMjMgMTkgNiAzIDYgNCAxIDctNSAyLTUgMi01IDctMSA4IDEgMjkgNCAzMyA0IDcgNjMgNDYgNjkgNDYgMyAwIDQ4LTI1IDUxLTI5IDItMSAzLTM0IDEtMzZsLTE2LTljLTE2LTgtMTYtOC05LTEwIDE5LTcgMzctMjcgNDMtNDdsNS0xYTE2NSAxNjUgMCAwIDAgNjAtMTNjOSAwIDM0LTIyIDQwLTM0bDQtOGM0LTcgNi0yNiA2LTU2IDAtMjkgMS0yNy0xMC0yOS02LTItOC0zLTEzLTgtMzAtMjktNzktMjMtOTYgMTAtMyA3LTMgNy04IDlzLTYgNS01IDE3djE1YzEgMTQgNCAxNiAzNCAyOGwxMiA2YzcgMyA3IDMgMzAtNyA4LTMgOS0zIDkgMS02IDIyLTY0IDQyLTczIDI0YTg3IDg3IDAgMCAwLTYzLTQyYy04IDAtOCAwIDYtMTFhNzM2IDczNiAwIDAgMCA4NS04OWwzLTVjMTktMzEgMjEtNzMgMy0xMDctNy0xNS0yMy0zNS0zNi00OC0zOS0zNi00Ni00Ny0zOC02MiA0LTggMTUtMTcgMjAtMTVhNDUyIDQ1MiAwIDAgMCA1NS0xMmMxMS00IDEzLTUgMTQtMTAgMC00IDItNyA5LTE0IDI0LTI2LTgtODAtNDMtNzFNMjI4IDMzNGMxIDEgMCAxLTEgMS0yMCAwLTI4IDMyLTEyIDQyIDE3IDkgMzctMyAzNy0yMiAwLTctNy0xNy0xMS0xN3YtMWMzLTIgMC0zLTctNGwtNiAxbTU0IDgtNCAxYy0yMiAzLTI1IDM5LTMgNDQgMjQgNSA0MS0yMSAyNS0zOGwtNS0zdi0zYy0xLTItMTQtMy0xMy0xbS00OSAxMjBjLTYgNy05IDE0LTkgMjQgMCA4IDEgMTIgMyA2IDItMTIgOC0yOCAxMy0zM3YtM2MtMSAwLTQgMi03IDZtOTcgNGMwIDIgMjMgMTcgMjcgMTcgMiAwIDEtMy00LTctOS03LTIzLTEzLTIzLTEwbS01NCA2Yy0yMSA1MSAyOSA5NiA3MyA2NyA4LTYgOC03LTEtOC0zOS0zLTYzLTIzLTY2LTU0LTItMTItMy0xMy02LTUiLz4KPC9zdmc+Cg==&style=flat-square&logoColor=black)](https://docs.docker.com/compose/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white)](https://www.docker.com/)
 
 ## 💡 주요 기능
 
-| 기능 | 설명 | 입력 이벤트 | 응답 이벤트 |
-| --- | --- | --- | --- |
-| 사용자 등록 | 유저ID &harr; 소켓ID 매핑 | emit("register", userId) | on("system", content) |
-| 방 생성 | 방 객체 생성 &rarr; 참가자 초대 이벤트 발생 | emit("create_room", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [hostId, participants]) | on("room_created", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [roomId, participants]) |
-| 방 참가 | 방에 사용자 추가 &rarr; 참가 완료 알림 | emit("join_room", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [userId, roomId]) | on("system", content) |
-| 방 떠나기 | 방에서 사용자 제거 &rarr; 떠남 알림 | emit("leave_room", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [userId, roomId]) | on("system", content) |
-| 메시지 교환 | 방에서 메시지 중계 | emit("send_message", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [roomId, senderId, content] ) | on("receive_message", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [senderId, roomId, content]) |
-| 타이핑 알림 | 방에서 타이핑 이벤트 중계 | emit("typing", <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [roomId, userId]) | on("typing", userId) |
+| 기능        | 설명                                                | 요청(Mutation)                                                                         | 구독(Subscription)                                     |
+| ----------- | --------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| 사용자 등록 | 유저ID &harr; 소켓ID 매핑                           | mutation setUser<br>(id: String!): Boolean!                                            | subscription userPresence: [String!]!                  |
+| 방 생성     | 방 객체 생성 &rarr;<br> 참가자 초대 이벤트 발생     | mutation createRoom<br>(hostId: String!, participants: [String!]!): String!            | subscription roomCreated<br>(userId: String!): Room!   |
+| 방 참가     | 방에 사용자 추가 &rarr;<br> 참가자 초대 이벤트 발생 | mutation joinRoom<br>(roomId: String!, userId: String!): Boolean!                      | subscription roomCreated<br>(userId: String!): Room!   |
+| 방 떠나기   | 방에서 사용자 제거 &rarr;<br> 떠남 알림             | mutation leaveRoom<br>(roomId: String!, userId: String!): Boolean!                     | subscription system<br>(input: SystemInput!): Message! |
+| 메시지 교환 | 방에서 메시지 중계                                  | mutation message<br>(content: String!, roomId: String!, userId: String!):<br> Boolean! | subscription message<br>(roomId: String!): Message!    |
+| 타이핑 알림 | 방에서 타이핑 이벤트 중계                           | mutation typing<br>(roomId: String!, userId: String!): Boolean!                        | subscription typing<br>(roomId: String!): Message!     |
 
-## 📐 시퀀스 다이어그램
+## 🛰️ GraphQL Schema Diagram
+
+> GraphQL Voyager는 GraphQL 스키마를 시각적으로 탐색하고 구조를 이해할 수 있도록 돕는 정적/인터랙티브 시각화 도구  
+> 타입과 타입 간 참조를 그래프 형태로 표현
+
+| [![voyager](https://github.com/user-attachments/assets/91d13616-99d2-416c-aef8-9462a21ae382)](https://narcisource.github.io/Chat-Service--Backend/) |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [GraphQL Voyager 바로가기](https://narcisource.github.io/Chat-Service--Backend/)                                                                    |
 
 ```mermaid
-sequenceDiagram
-    participant Web1
-    participant Web2
-    participant Server
-    participant Room
-    participant DB
+classDiagram
+  direction LR
 
-    %% 1. 연결 단계
-    Web1 ->> Server: connect() (WebSocket handshake)
-    activate Server
-    Web2 ->> Server: connect() (WebSocket handshake)
-    Server -->> Web1: connection established (ack)
-    Server -->> Web2: connection established (ack)
+  class Message {
+    +content : String
+    +roomId : String!
+    +userId : String!
+  }
 
-    %% 2. 연결 성공 시 동작
-    opt connection established
-      %% 2-1. 사용자 등록
-      Web1 ->> Server: emit("register", id)
+  class Room {
+    +participants : [String!]!
+    +roomId : String!
+  }
 
-      %% 데이터베이스 저장
-      Server ->> DB: [id, socketId]
-      activate DB
-      deactivate DB
+  class SystemInput {
+    +roomId : String
+    +userId : String
+  }
 
-      %% 2-2. 여러 방 생성 시나리오
-      loop For each room
-        Web1 ->> Server: emit("create_room", [hostId, participants])
+  class Query {
+    +getUsers() : [String!]!
+  }
 
-        %% 데이터베이스 저장
-        Server ->> DB: [roomId, members]
-        activate DB
-        deactivate DB
+  class Mutation {
+    +createRoom(hostId: String!, participants: [String!]!) : String!
+    +joinRoom(roomId: String!, userId: String!) : Boolean!
+    +leaveRoom(roomId: String!, userId: String!) : Boolean!
+    +message(content: String!, roomId: String!, userId: String!) : Boolean!
+    +setUser(id: String!) : Boolean!
+    +typing(roomId: String!, userId: String!) : Boolean!
+  }
 
-        Server ->> Room: new Room(roomId)
+  class Subscription {
+    +message(roomId: String!) : Message!
+    +roomCreated(userId: String!) : Room!
+    +system(input: SystemInput!) : Message!
+    +typing(roomId: String!) : Message!
+    +userPresence : [String!]!
+  }
 
-        activate Room
-        Server -->> Web1: on("room_created", roomId)
-        Server -->> Web2: on("room_invite", roomId)
-
-        %% 2-3. 방 참가
-        Web2 ->> Server: emit("join_room", roomId)
-        Server ->> Room: add(Web2)
-        Room -->> Web2: on("joined_room", roomId)
-
-        %% 2-4. 방 내 메시지 교환 & 타이핑 알림
-        loop Multiple events
-          Web1 ->> Room: emit("send_message", message)
-
-          %% 데이터베이스 저장
-          Room ->> DB: message
-          activate DB
-          deactivate DB
-
-          note over Room: Message and typing events exchange
-          Room ->> Room: broadcast
-          Room -->> Web2: on("new_message", message)
-
-          Web1 ->> Room: emit("typing")
-          Room -->> Web2: on("typing", who)
-        end
-
-        deactivate Room
-      end
-
-      %% 2-5. 연결 종료 시 DB 반영
-      Web2 ->> Server: disconnect()
-      Web1 ->> Server: disconnect()
-
-      Server ->> DB: remove/update socketId
-      activate DB
-      deactivate DB
-    end
-
-    deactivate Server
+  %% 관계
+  Mutation --> Room : create/join/leave
+  Mutation --> Message : send
+  Subscription --> Message : publishes
+  Subscription --> Room : publishes
+  Subscription --> SystemInput : uses
+  Message --> Room : belongs to
 ```
 
 ## 📂 폴더 구조
@@ -105,23 +92,33 @@ sequenceDiagram
 ```
 server
 ├─ .env
+├─ docs
+│  └─ index.html
+├─ graphql
+│  └─ schema.gql
 ├─ src
 │  ├─ main.ts
 │  ├─ common
+│  │  ├─ graphql.module.ts
+│  │  ├─ pubsub.module.ts
 │  │  └─ redis.module.ts
 │  ├─ core
 │  │  ├─ controller.ts
-│  │  ├─ gateway.ts
 │  │  └─ module.ts
 │  ├─ domain
 │  │  ├─ user
-│  │  │  ├─ controller.ts
-│  │  │  ├─ gateway.ts
+│  │  │  ├─ model.ts
+│  │  │  ├─ module.ts
+│  │  │  ├─ resolver.ts
 │  │  │  └─ service.ts
 │  │  ├─ chat
-│  │  │  └─ gateway.ts
+│  │  │  ├─ model.ts
+│  │  │  ├─ module.ts
+│  │  │  └─ resolver.ts
 │  │  └─ room
-│  │     ├─ gateway.ts
+│  │     ├─ model.ts
+│  │     ├─ module.ts
+│  │     ├─ resolver.ts
 │  │     └─ service.ts
 │  └─ repository
 │     ├─ interface.ts
@@ -132,6 +129,7 @@ server
 │  ├─ Dockerfile
 │  └─ .dockerignore
 ├─ nest-cli.json
+├─ codegen.introspection.yml
 ├─ package.json
 │  └─ package-lock.json
 ├─ tsconfig.json
@@ -154,3 +152,15 @@ $ docker run -d \
 $ npm install
 $ npm run start
 ```
+
+```sh
+$ docker-compose up -d
+```
+
+## 🖥️ 접속 안내
+
+| 환경               | URL                              |
+| ------------------ | -------------------------------- |
+| server healthcheck | <http://localhost:3000>          |
+| graphql schema     | <http://localhost:3000/voyager>⁠ |
+| graphql playground | <http://localhost:3000/graphql>⁠ |
