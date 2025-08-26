@@ -1,0 +1,3 @@
+mutation sendTyping($roomId: String!, $userId: String!) {
+  typing(roomId: $roomId, userId: $userId)
+}

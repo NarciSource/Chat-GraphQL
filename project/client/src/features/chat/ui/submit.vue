@@ -9,14 +9,15 @@
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 
-import { Message } from "@/entities/chat/model";
-import { send_message, typing_message } from "../service/event_helper";
 import useChatStore from "../store/useChatStore";
+import { useSendMessageMutation, useSendTypingMutation } from "../api/hooks";
 
 // 반응형 변수
 const message_input = ref("");
 const is_empty = computed(() => message_input.value === "");
 const { current_user, room } = storeToRefs(useChatStore());
+const { mutate: send_message } = useSendMessageMutation();
+const { mutate: typing_message } = useSendTypingMutation();
 
 // 메시지 전송 함수
 const send = () => {
@@ -24,15 +25,21 @@ const send = () => {
     return; // 메시지가 비어있으면 전송하지 않음
   }
 
-  const message = new Message(current_user.value!, [message_input.value]); // 메시지 생성
-
-  send_message(room.value!, message); // 메시지 전송
+  // 메시지 전송
+  send_message({
+    roomId: room.value!.id,
+    userId: current_user.value!.id,
+    content: message_input.value,
+  });
 
   message_input.value = ""; // 입력폼 초기화
 };
 
 // 타이핑 이벤트
 watch(message_input, () => {
-  typing_message(room.value!, current_user.value!);
+  typing_message({
+    roomId: room.value!.id,
+    userId: current_user.value!.id,
+  });
 });
 </script>

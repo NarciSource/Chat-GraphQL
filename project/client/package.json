@@ -2,7 +2,7 @@
   "name": "chat-service--frontend",
   "private": true,
   "description": "채팅 서비스 프론트엔드",
-  "version": "1.7.0",
+  "version": "2.0.0",
   "type": "module",
   "author": "NarciSource",
   "scripts": {
@@ -10,6 +10,7 @@
     "build": "vite build",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
+    "codegen": "graphql-codegen --config codegen.yml",
     "docs": "typedoc",
     "preview": "vite preview",
     "format": "prettier --write ./src",
@@ -17,6 +18,11 @@
     "start": "npm run build && npm run preview"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^6.0.0",
+    "@graphql-codegen/import-types-preset": "^3.0.1",
+    "@graphql-codegen/typescript": "^5.0.2",
+    "@graphql-codegen/typescript-operations": "^5.0.2",
+    "@graphql-codegen/typescript-vue-apollo": "^4.1.2",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^24.7.2",
     "@vitejs/plugin-vue": "^6.0.1",
@@ -38,14 +44,17 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.14",
     "@quasar/extras": "^1.17.0",
     "@quasar/vite-plugin": "^1.10.0",
-    "axios": "^1.12.2",
+    "@vue/apollo-composable": "^4.2.2",
     "file-saver": "^2.0.5",
+    "graphql": "^16.11.0",
+    "graphql-tag": "^2.12.6",
+    "graphql-ws": "^5.16.2",
     "jwt-decode": "^4.0.0",
     "pinia": "^3.0.3",
     "quasar": "^2.18.5",
-    "socket.io-client": "^4.8.1",
     "vite-plugin-css-injected-by-js": "^3.5.2",
     "vue": "^3.5.22"
   },

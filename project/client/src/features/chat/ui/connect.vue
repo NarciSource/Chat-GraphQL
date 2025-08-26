@@ -4,7 +4,7 @@
 
   <!-- 채팅 화면 접근 차단 -->
   <q-inner-loading
-    :showing="!store.connecting"
+    :showing="!connecting"
     class="fit"
     color="teal-9"
     label="채팅 연결 대기 중..."
@@ -13,30 +13,57 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect } from "vue";
+import { watch } from "vue";
+import { storeToRefs } from "pinia";
 
+import { Message, User } from "@/entities/chat/model";
 import {
-  connected,
-  connect_failed,
-  disconnected,
-  message_received,
-  system_message_received,
-  handle_typing_message,
-} from "../service/event_helper";
+  useOnTypingSubscription,
+  useReceiveMessageSubscription,
+  useSystemSubscription,
+} from "../api/hooks";
 import useChatStore from "../store/useChatStore";
 
+const { room, connecting } = storeToRefs(useChatStore());
 const { insert_message, alarm_typing } = useChatStore();
-const store = useChatStore();
 
-watchEffect(() => {
-  if (store.connecting) {
-    // 소켓 이벤트 리스너 등록
-    connected(() => (store.connecting = true)); // 연결 성공
-    connect_failed(() => (store.connecting = false)); // 연결 실패
-    disconnected(() => (store.connecting = false)); // 연결 종료
-    message_received(insert_message); // 일반 메시지 수신
-    system_message_received(insert_message); // 시스템 메시지 수신
-    handle_typing_message(alarm_typing); // 타이핑 알림
-  }
+const { result: message_result } = useReceiveMessageSubscription(() => ({
+  roomId: room.value!.id!,
+}));
+const { result: system_result } = useSystemSubscription(() => ({
+  input: { roomId: room!.value!.id! },
+}));
+const { result: typing_result } = useOnTypingSubscription(() => ({
+  roomId: room!.value!.id!,
+}));
+
+// room 변경 시 이전 메시지 결과 초기화
+watch(room, () => {
+  message_result.value = undefined;
+  system_result.value = undefined;
+  typing_result.value = undefined;
+});
+
+// 일반 메시지 수신
+watch(message_result, (result) => {
+  if (!result) return;
+
+  const { userId, content } = result.message;
+  insert_message(new Message(new User(userId), [content ?? ""]));
+});
+
+// 시스템 메시지 수신
+watch(system_result, (result) => {
+  if (!result) return;
+
+  const { content } = result.system;
+  insert_message(new Message(new User("System"), [content ?? ""]));
+});
+
+// 타이핑 이벤트 수신
+watch(typing_result, (result) => {
+  if (!result) return;
+
+  alarm_typing(result.typing.userId!);
 });
 </script>

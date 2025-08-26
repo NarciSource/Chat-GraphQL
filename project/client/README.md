@@ -1,8 +1,9 @@
-# Socket.io 채팅 서비스 프론트엔드
+# GraphQL 채팅 서비스 프론트엔드
 
 ## 🛠️ 기술 스택
 
-[![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=socketdotio&logoColor=white)](https://socket.io/)  
+[![GraphQL](https://img.shields.io/badge/GraphQL-E10098?style=flat-square&logo=graphql&logoColor=white)](https://graphql.org/)
+[![Apollo](https://img.shields.io/badge/Apollo-311C87?style=flat-square&logo=apollographql&logoColor=white)](https://www.apollographql.com/)  
 [![Vuejs](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![Pinia](https://img.shields.io/badge/🍍_Pinia-FFD859?style=flat-square&logoColor=white)](https://pinia.vuejs.org/)
 [![Quasar](https://img.shields.io/badge/Quasar-050A14?style=flat-square&logo=quasar&logoColor=white)](https://quasar.dev/)  
@@ -73,32 +74,38 @@ https://github.com/user-attachments/assets/33a33082-bac5-4f8f-bbcf-1c338ebad78e
 classDiagram
     direction RL
 
-    class Client {
-        +connecting // 소캣 연결 여부
-        +room // 현재 방 정보
-        +current_user // 사용자
-        +query // 검색어
-        +searching // 검색 중 여부
-        +typing_user // 타이핑 중인 사용자
-        +messages // 메시지 목록
-        +system() // 시스템 메시지 수신
-        +room_created() // 방 생성 메시지 확인
-        +receive_message() // 채팅 메시지 수신 확인
-        +typing() // 타이핑 상태 확인
+    class ApolloClient {
+        +currentUser // 현재 사용자
+        +currentRoom // 현재 방
+        +messages // 수신한 메시지 목록
+        +subscribeSystem() // 시스템 메시지 구독
+        +subscribeRoomCreated() // 방 생성 구독
+        +subscribeMessage() // 채팅 메시지 구독
+        +subscribeTyping() // 타이핑 상태 구독
+        +subscribeUserPresence() // 사용자 상태 구독
+        +mutationCreateRoom() // 방 생성 요청
+        +mutationJoinRoom() // 방 참가 요청
+        +mutationLeaveRoom() // 방 퇴장 요청
+        +mutationSendMessage() // 메시지 전송
+        +mutationTyping() // 타이핑 상태 전송
     }
 
-    class Server {
-        +userRoomsMap // 각 방의 참여 유저 목록
-        +roomMembersMap // 유저가 참여 중인 방 목록
-        +register() // 사용자 등록 이벤트 수신
-        +create_room() // 방 생성 이벤트 수신
-        +leave_room() // 방 퇴장 이벤트 수신
-        +join_room() // 방 참여 이벤트 수신
-        +send_message() // 메시지 송신 이벤트 수신
-        +typing() // 타이핑 상태 이벤트 수신
+    class ApolloServer {
+        +schema // Query, Mutation, Subscription 정의
+        +Mutation.createRoom() : String!
+        +Mutation.joinRoom() : Boolean!
+        +Mutation.leaveRoom() : Boolean!
+        +Mutation.message() : Boolean!
+        +Mutation.typing() : Boolean!
+        +Subscription.message(roomId) : Message!
+        +Subscription.roomCreated(userId) : Room!
+        +Subscription.system(input) : Message!
+        +Subscription.typing(roomId) : Message!
+        +Subscription.userPresence() : [String!]!
     }
 
-    Client --|> Server : websocket
+    ApolloClient --> ApolloServer : HTTP (Query/Mutation)
+    ApolloClient --|> ApolloServer : WebSocket (Subscription)
 ```
 
 ### 🚚 CI/CD 파이프라인
@@ -149,7 +156,7 @@ client
 ├─ src
 │  ├─ app
 │  │  ├─ App.vue # 애플리케이션 컴포넌트 진입점
-│  │  ├─ application.ts # single-spa 애플리케이션 진입점
+│  │  ├─ apolloPlugin.ts # 아폴로 클라이언트 플러그인
 │  │  └─ main.ts # 프로바이더 스택
 │  ├─ entities # 비즈니스 엔터티 레이어
 │  │  └─ chat
@@ -161,21 +168,21 @@ client
 │  │     │  ├─ Room.ts
 │  │     │  └─ User.ts
 │  │     └─ service
-│  │        ├─ mapper # 페이로드 ↔ 엔터티 헬퍼 메서드
-│  │        │  ├─ dictionary.ts # 매핑헬퍼서비스 사전
-│  │        │  ├─ message.ts # 메시지 관련 헬퍼함수
-│  │        │  ├─ room.ts # 방 관련 헬퍼함수
-│  │        │  └─ user.ts # 유저 관련 헬퍼함수
-│  │        ├─ restService.ts # REST 서비스
-│  │        │  └─ restService.test.ts
-│  │        └─ socketService.ts # 소켓 서비스
-│  │           └─ socketService.test.ts
+│  │        └── mapper # 페이로드 ↔ 엔터티 헬퍼 메서드
+│  │           └─ user.ts # 유저 관련 헬퍼함수
 │  ├─ features # 기능 구현체 레이어
 │  │  ├─ chat
 │  │  │  ├─ index.vue
-│  │  │  ├─ service
-│  │  │  │  └─ event_helper.ts # 소켓 이벤트 ↔ 로직 이벤트
-│  │  │  │     └─ event_helper.test.ts
+│  │  │  ├─ api
+│  │  │  │  ├─ mutations # GraphQL 뮤테이션
+│  │  │  │  │  ├─ sendMessage.gql
+│  │  │  │  │  └─ sendTyping.gql
+│  │  │  │  ├─ subscriptions # GraphQL 구독
+│  │  │  │  │  ├─ receiveMessage.gql
+│  │  │  │  │  ├─ system.gql
+│  │  │  │  │  └─ onTyping.gql
+│  │  │  │  ├─ operations.ts # GraphQL 연산
+│  │  │  │  └─ hooks.ts # GraphQL 훅
 │  │  │  ├─ store # 중앙상태저장소
 │  │  │  │  └─ useChatStore.ts
 │  │  │  └─ ui
@@ -193,20 +200,33 @@ client
 │  │  ├─ room
 │  │  │  ├─ index.ts
 │  │  │  ├─ index.vue
-│  │  │  ├─ service
-│  │  │  │  └─ event_helper.ts
-│  │  │  │     └─ event_helper.test.ts
+│  │  │  ├─ api
+│  │  │  │  ├─ mutations
+│  │  │  │  │  ├─ createRoom.gql
+│  │  │  │  │  ├─ joinRoom.gql
+│  │  │  │  │  └─ leaveRoom.gql
+│  │  │  │  ├─ subscriptions
+│  │  │  │  │  └─ roomCreated.gql
+│  │  │  │  ├─ operations.ts
+│  │  │  │  └─ hooks.ts
 │  │  │  ├─ store
 │  │  │  │  └─ useRoomStore.ts
 │  │  │  └─ ui
 │  │  │     ├─ index.ts
 │  │  │     ├─ layout.vue # 레이아웃
-│  │  │     ├─ register.vue # 서버 접속
 │  │  │     ├─ make-room.vue # 방 만들기
+│  │  │     ├─ invite-room.vue # 방 초대
 │  │  │     ├─ leave-room.vue # 방 나가기
 │  │  │     └─ room-list.vue # 방 목록
 │  │  ├─ user-auth # 현재 사용자
 │  │  │  ├─ index.ts
+│  │  │  ├─ api
+│  │  │  │  ├─ quries
+│  │  │  │  │  └─ getUsers.gql
+│  │  │  │  ├─ mutations
+│  │  │  │  │  └─ setUser.gql
+│  │  │  │  ├─ operations.ts
+│  │  │  │  └─ hooks.ts
 │  │  │  ├─ store
 │  │  │  │  └─ useUserStore.ts
 │  │  │  └─ ui
@@ -215,6 +235,11 @@ client
 │  │  │     └─ register.vue
 │  │  └─ user-presence # 접속 사용자들
 │  │     ├─ index.vue
+│  │     ├─ api
+│  │     │  ├─ subscriptions
+│  │     │  │  └─ userPresence.gql
+│  │     │  ├─ operations.ts
+│  │     │  └─ hooks.ts
 │  │     ├─ store
 │  │     │  └─ useUsersStore.ts
 │  │     └─ ui
@@ -236,10 +261,13 @@ client
 │  │        ├─ layout.vue
 │  │        └─ fab-layout.vue # 플로팅버튼 레이아웃
 │  └─ shared # 공유 레이어
-│     ├─ lib
-│     │  ├─ tokens.ts # 토큰 3종
-│     │  └─ getUser.ts # 접속 유저 정보 불러오기
-│     └─ socket_constants.ts # 환경변수 불러오기
+│     ├─ api
+│     │  └─ types.ts # GraphQL 공용 타입
+│     └─ lib
+│        ├─ apolloClient.ts # Apollo Client 공용 참조
+│        ├─ tokens.ts # 토큰 3종
+│        └─ getUser.ts # 접속 유저 정보 불러오기
+├─ codegen.yml # GraphQL 훅 생성기
 ├─ package.json # 의존성 설정
 │  ├─ .prettierrc # 포맷터 설정
 │  ├─ eslint.config.js # 린트 설정

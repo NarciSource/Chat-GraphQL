@@ -7,7 +7,14 @@ import importPlugin from "eslint-plugin-import";
 
 export default typescriptEslint.config(
   {
-    ignores: ["*.d.ts", "**/coverage", "**/dist"],
+    ignores: [
+      "*.d.ts",
+      "**/coverage",
+      "**/dist",
+      "src/features/**/api/hooks.ts",
+      "src/features/**/api/operations.ts",
+      "src/shared/api/types.ts",
+    ],
   },
 
   {

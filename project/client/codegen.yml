@@ -1,0 +1,93 @@
+overwrite: true
+schema: ../server/graphql/schema.gql
+generates:
+  # shared 타입
+  src/shared/api/types.ts:
+    plugins:
+      - typescript
+
+  # operation 타입
+  src/features/chat/api/operations.ts:
+    documents: src/features/chat/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: "@/shared/api/types"
+      importTypesNamespace: SchemaTypes
+    plugins:
+      - typescript-operations
+
+  src/features/room/api/operations.ts:
+    documents: src/features/room/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: "@/shared/api/types"
+      importTypesNamespace: SchemaTypes
+    plugins:
+      - typescript-operations
+
+  src/features/user-auth/api/operations.ts:
+    documents: src/features/user-auth/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: "@/shared/api/types"
+      importTypesNamespace: SchemaTypes
+    plugins:
+      - typescript-operations
+
+  src/features/user-presence/api/operations.ts:
+    documents: src/features/user-presence/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: "@/shared/api/types"
+      importTypesNamespace: SchemaTypes
+    plugins:
+      - typescript-operations
+
+  # vue-apollo 훅
+  src/features/chat/api/hooks.ts:
+    documents: src/features/chat/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: ./operations
+      importTypesNamespace: Ops
+    plugins:
+      - typescript-vue-apollo
+    config:
+      withCompositionFunctions: true
+      vueCompositionApiImportFrom: "vue"
+
+  src/features/room/api/hooks.ts:
+    documents: src/features/room/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: ./operations
+      importTypesNamespace: Ops
+    plugins:
+      - typescript-vue-apollo
+    config:
+      withCompositionFunctions: true
+      vueCompositionApiImportFrom: "vue"
+
+  src/features/user-auth/api/hooks.ts:
+    documents: src/features/user-auth/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: ./operations
+      importTypesNamespace: Ops
+    plugins:
+      - typescript-vue-apollo
+    config:
+      withCompositionFunctions: true
+      vueCompositionApiImportFrom: "vue"
+
+  src/features/user-presence/api/hooks.ts:
+    documents: src/features/user-presence/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: ./operations
+      importTypesNamespace: Ops
+    plugins:
+      - typescript-vue-apollo
+    config:
+      withCompositionFunctions: true
+      vueCompositionApiImportFrom: "vue"

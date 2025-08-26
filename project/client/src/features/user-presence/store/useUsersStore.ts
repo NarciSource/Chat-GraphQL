@@ -1,13 +1,26 @@
-import { ref } from "vue";
 import { defineStore } from "pinia";
+import { onUnmounted, ref } from "vue";
 
 import User from "@/entities/chat/model/User";
-import { get_users } from "@/entities/chat/service/restService";
+import { dto_to_user } from "@/entities/chat/service/mapper/user";
+import { apolloClient } from "@/shared/lib/apolloClient";
+import { UserPresenceDocument } from "../api/hooks";
 
 export default defineStore("users", () => {
   const users = ref<User[]>([]);
 
-  const init_users = () => get_users().then((data) => (users.value = data));
+  const init_users = () => {
+    const subscription = apolloClient.subscribe({ query: UserPresenceDocument }).subscribe({
+      next: ({ data }) => {
+        users.value = dto_to_user(data?.userPresence || []);
+      },
+      error: (err) => console.error("subscription error:", err),
+    });
+
+    onUnmounted(() => {
+      subscription.unsubscribe();
+    });
+  };
 
   return { users, init_users };
 });

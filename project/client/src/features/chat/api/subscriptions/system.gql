@@ -1,0 +1,7 @@
+subscription System($input: SystemInput!) {
+  system(input: $input) {
+    roomId
+    userId
+    content
+  }
+}

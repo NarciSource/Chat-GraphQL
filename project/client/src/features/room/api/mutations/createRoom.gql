@@ -1,0 +1,3 @@
+mutation createRoom($hostId: String!, $participants: [String!]!) {
+  createRoom(hostId: $hostId, participants: $participants)
+}
