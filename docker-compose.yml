@@ -31,7 +31,7 @@ services:
       context: project/client
       dockerfile: Dockerfile
       args:
-        - VITE_SOCKET_SERVER_URL=http://localhost:${SERVER_PORT}/chat
+        - VITE_GRAPHQL_SERVER_URL=http://${SERVER_HOST}:${SERVER_PORT}/graphql
         - VITE_MANUAL_USER_SET=true
 
     networks:
