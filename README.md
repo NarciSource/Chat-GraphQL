@@ -4,8 +4,8 @@
 
 - [🛠️ 기술 스택](#️-기술-스택)
 - [💁 소개](#-소개)
-- [💡 주요 기능](#-주요-기능)
 - [🎥 데모](#-데모)
+- [💡 주요 기능](#-주요-기능)
 - [📊 다이어그램](#-다이어그램)
   - [🏗️ Architecture Diagram](#️-architecture-diagram)
   - [📡 Communication Diagram](#-communication-diagram)
@@ -34,6 +34,7 @@
 [![Voyager](https://img.shields.io/badge/🛰️Voyager-548f9e?style=flat-square&logoColor=white)](https://github.com/APIs-guru/graphql-voyager)  
 [![Docker Compose](https://img.shields.io/badge/Docker_Compose-2AB4FF.svg?logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjMgNjY1Ij4KICA8cGF0aCBmaWxsPSIjZmNmY2ZjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik00MTggMWMtNiAxLTkgMy0xMyA4LTQgMy00IDMtMTAgMS0xMi02LTYwIDAtNjYgOC01IDYtMTEgNDQtOCA1MGwyMyAxN2M3IDQgNyA2IDIgNy0yMyAzLTM3IDI5LTI5IDUyIDMgOSAzIDktMTAgNi0xOS01LTI0LTYtNDUtNS00NyAwLTg2IDE4LTEwOSA1MGExMzUgMTM1IDAgMCAwLTI0IDY0Yy0zIDI4IDIgNDggMTcgNzJsMjIgMjdjNDAgNDQgNDEgNjYgMyA5MS00NSAzMC0xMDQgMTktMTA2LTIwLTEtMTYgNC0yOSAxNy01MiAxMy0yNCAxNC0zMyAzLTUybDEzLThjMjQtMTIgMjItOSAyMy0zNCAwLTIyIDItMjAtMjMtMzAtMTgtNi0yMC02LTQwLTEtMjggOS00MCAxNC00MSAxOCAwIDItMSAzLTIgMy03IDAtMTQgMTItMTUgMjUtMSAyMSA2IDI5IDMwIDM2IDMwIDkgMzUgMjQgMTkgNDktMzYgNTMtMzIgMTAyIDExIDEyMSAzNSAxNiA3NCAxMyAxMTktOWwxMS01IDMgMzJjMCAzNC00MCAzOC04OSA4bC0xNi0xMGMtNTEtMjktMTAyIDI0LTY2IDcwIDE1IDIwIDQyIDIxIDQ2IDIgMi04IDAtMTEtMTAtMTktMTYtMTItMTctMjQtMi0yNyA1LTEgMjYgOCAyOCAxMmwzNCAyOSAyMCAxMiAyMCA4YzM2IDEzIDgyLTE1IDgyLTUwIDAtMTAgMC0xMCA2LTUgMTAgMTAgMTggMTYgMjMgMTkgNiAzIDYgNCAxIDctNSAyLTUgMi01IDctMSA4IDEgMjkgNCAzMyA0IDcgNjMgNDYgNjkgNDYgMyAwIDQ4LTI1IDUxLTI5IDItMSAzLTM0IDEtMzZsLTE2LTljLTE2LTgtMTYtOC05LTEwIDE5LTcgMzctMjcgNDMtNDdsNS0xYTE2NSAxNjUgMCAwIDAgNjAtMTNjOSAwIDM0LTIyIDQwLTM0bDQtOGM0LTcgNi0yNiA2LTU2IDAtMjkgMS0yNy0xMC0yOS02LTItOC0zLTEzLTgtMzAtMjktNzktMjMtOTYgMTAtMyA3LTMgNy04IDlzLTYgNS01IDE3djE1YzEgMTQgNCAxNiAzNCAyOGwxMiA2YzcgMyA3IDMgMzAtNyA4LTMgOS0zIDkgMS02IDIyLTY0IDQyLTczIDI0YTg3IDg3IDAgMCAwLTYzLTQyYy04IDAtOCAwIDYtMTFhNzM2IDczNiAwIDAgMCA4NS04OWwzLTVjMTktMzEgMjEtNzMgMy0xMDctNy0xNS0yMy0zNS0zNi00OC0zOS0zNi00Ni00Ny0zOC02MiA0LTggMTUtMTcgMjAtMTVhNDUyIDQ1MiAwIDAgMCA1NS0xMmMxMS00IDEzLTUgMTQtMTAgMC00IDItNyA5LTE0IDI0LTI2LTgtODAtNDMtNzFNMjI4IDMzNGMxIDEgMCAxLTEgMS0yMCAwLTI4IDMyLTEyIDQyIDE3IDkgMzctMyAzNy0yMiAwLTctNy0xNy0xMS0xN3YtMWMzLTIgMC0zLTctNGwtNiAxbTU0IDgtNCAxYy0yMiAzLTI1IDM5LTMgNDQgMjQgNSA0MS0yMSAyNS0zOGwtNS0zdi0zYy0xLTItMTQtMy0xMy0xbS00OSAxMjBjLTYgNy05IDE0LTkgMjQgMCA4IDEgMTIgMyA2IDItMTIgOC0yOCAxMy0zM3YtM2MtMSAwLTQgMi03IDZtOTcgNGMwIDIgMjMgMTcgMjcgMTcgMiAwIDEtMy00LTctOS03LTIzLTEzLTIzLTEwbS01NCA2Yy0yMSA1MSAyOSA5NiA3MyA2NyA4LTYgOC03LTEtOC0zOS0zLTYzLTIzLTY2LTU0LTItMTItMy0xMy02LTUiLz4KPC9zdmc+Cg==&style=flat-square&logoColor=black)](https://docs.docker.com/compose/)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=Docker&logoColor=white)](https://www.docker.com/)
+[![Kong](https://img.shields.io/badge/Kong-003459?style=flat-square&logo=kong&logoColor=white)](https://konghq.com/ko-kr)
 [![NGINX](https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=nginx&logoColor=white)](https://nginx.org/)
 
 ## 💁 소개
@@ -42,6 +43,10 @@
 사용자는 채팅 방을 생성하고, 다른 사용자와 동시에 메시지를 주고받으며,  
 타이핑 상태 알림으로 대화 몰입도를 높일 수 있습니다.  
 모든 메시지와 이벤트는 Redis에 저장 후 즉시 소비되어, 초저지연 실시간 통신을 제공합니다.
+
+## 🎥 데모
+
+https://github.com/user-attachments/assets/33a33082-bac5-4f8f-bbcf-1c338ebad78e
 
 ## 💡 주요 기능
 
@@ -55,32 +60,34 @@
 | 채팅방 내용 키워드 검색          | 채팅방 내의 메시지를 키워드를 통해 쉽게 검색할 수 있는 기능을 제공합니다.          |
 | 채팅 대화 디스크 저장            | 모든 채팅 내용을 디스크에 저장하여 나중에 다시 볼 수 있게 합니다.                  |
 
-## 🎥 데모
-
-https://github.com/user-attachments/assets/15210587-2652-4b2b-b829-4291e6ad440c
-
 ## 📊 다이어그램
 
 ### 🏗️ Architecture Diagram
 
-![architecture](https://github.com/user-attachments/assets/5d78d6e8-14be-472c-b29f-be56add76267)
+![architecture](https://github.com/user-attachments/assets/9b13fa73-3a4e-4d67-b994-f26c800a55fe)
 
 - 백엔드
   - **Apollo Server**: Express 플러그인으로 GraphQL Query / Mutation / Subscription / Resolver 처리
+  - **Kong API Gateway**: 클라이언트 요청 라우팅 및 로드밸런싱, WebSocket 업그레이드 지원
   - **NestJS 서버**: 이벤트 처리, 비즈니스 로직 실행
-  - **Redis Pub/Sub**: 채팅 메시지 및 이벤트 브로드캐스트용 Pub/Sub
-  - **비즈니스 로직**: 클라이언트 요청 처리 후 Redis Pub/Sub 통해 실시간 이벤트 브로드캐스팅
+  - **Business**: 클라이언트 요청 처리, 레플리카 간 **Redis Adapter**를 통해 세션 동기화
+  - **Redis**
+    - **Pub/Sub**: 서버 레플리카 간 Socket.IO 이벤트 동기화
+    - **Storage**: 캐싱 및 데이터 저장소 역할
 - 프론트엔드
   - **Apollo Client**: GraphQL Query/Mutation/Subscription 처리, 클라이언트 캐싱, 데이터 페칭
+  - **NGINX**: 프론트엔드 애플리케이션 정적 파일 서빙
   - **Vue**: UI 렌더링 및 상태 관리
   - **Quasar**: 웹 UI 구성 및 스타일링
 - 데이터 흐름
   1. 클라이언트(Vue)에서 Apollo Client로 GraphQL Query / Mutation / Subscription 요청 전송
-  2. Apollo Server + NestJS에서 요청 처리 후 비즈니스 로직 실행
+  2. Kong API Gateway가 WebSocket 업그레이드를 처리하고 요청을 NestJS 서버 레플리카로 전달
+  3. Apollo Server + NestJS에서 요청 처리 후 비즈니스 로직 실행
      - Query / Mutation: 비즈니스 로직 실행 후 응답 반환
      - Subscription: Redis Pub/Sub를 통해 실시간 이벤트 브로드캐스트
-  3. 클라이언트는 Subscription을 구독하고, 서버에서 발행된 메시지를 실시간 수신
-  4. 화면에 실시간 업데이트 (채팅 메시지, 타이핑 상태, 방 생성)
+     - Redis Storage에서 데이터 조회/저장
+  4. 클라이언트는 Subscription을 구독하고, 서버에서 발행된 메시지를 실시간 수신
+  5. 화면에 실시간 업데이트 (채팅 메시지, 타이핑 상태, 방 생성)
 
 ### 📡 Communication Diagram
 
@@ -200,9 +207,10 @@ $ docker-compose up -d
 
 ## 🖥️ 접속 안내
 
-| 환경               | URL                              |
-| ------------------ | -------------------------------- |
-| web                | <http://localhost:80>            |
-| server healthcheck | <http://localhost:3000>          |
-| graphql schema     | <http://localhost:3000/voyager>⁠ |
-| graphql playground | <http://localhost:3000/graphql>⁠ |
+| 환경                 | URL                              |
+| -------------------- | -------------------------------- |
+| web                  | <http://localhost:80>            |
+| server healthcheck   | <http://localhost:3000>          |
+| graphql schema       | <http://localhost:3000/voyager>⁠ |
+| graphql playground   | <http://localhost:3000/graphql>⁠ |
+| api gateway 대시보드 | <http://localhost:3002>          |
