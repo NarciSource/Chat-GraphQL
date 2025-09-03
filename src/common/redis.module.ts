@@ -1,22 +1,21 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createClient } from 'redis';
+import Redis from 'ioredis';
 
 @Global()
 @Module({
   providers: [
     {
       provide: 'REDIS_CLIENT',
-      useFactory: async (configService: ConfigService) => {
+      useFactory: (configService: ConfigService) => {
+        const logger = new Logger('RedisStorage');
         const host = configService.get<string>('REDIS_HOST', 'localhost');
         const port = configService.get<number>('REDIS_PORT', 6379);
-        const url = `redis://${host}:${port}`;
 
-        const client = createClient({ url });
-        client.on('connect', () => console.log('[RedisModule] Redis client connected'));
-        client.on('error', (err) => console.error('Redis Client Error', err));
+        const client = new Redis({ host, port });
 
-        await client.connect();
+        client.on('ready', () => logger.log(`${host}:${port}에 연결 완료`));
+        client.on('error', (error) => logger.error(`${host}:${port}에 연결 실패`, error));
 
         return client;
       },

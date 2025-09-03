@@ -23,7 +23,7 @@ export class RoomService {
     const members = [...participants, hostId];
 
     for (const userId of members) {
-      await this.repository.addRoomToUser(userId, roomId);
+      await this.repository.addRoomToMember(userId, roomId);
     }
 
     return { roomId, participants: members };
@@ -40,7 +40,7 @@ export class RoomService {
       return { success: false };
     }
 
-    await this.repository.addRoomToUser(userId, roomId);
+    await this.repository.addRoomToMember(userId, roomId);
 
     return { success: true, participants: members };
   }
@@ -53,7 +53,7 @@ export class RoomService {
       return false;
     }
 
-    await this.repository.removeRoomToUser(userId, roomId);
+    await this.repository.removeRoomToMember(userId, roomId);
 
     return true;
   }

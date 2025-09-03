@@ -58,10 +58,6 @@ export class SimpleRepository implements IRepository {
     delete this.userSessions[targetUserId];
   }
 
-  async getRoomsByUser(userId: string) {
-    return [...(this.userRoomsMap.get(userId) ?? [])];
-  }
-
   // room
   async getRooms() {
     return [...this.roomMembersMap.keys()];
@@ -78,12 +74,16 @@ export class SimpleRepository implements IRepository {
     this.roomMembersMap.delete(roomId);
   }
 
+  async getRoomsByUser(userId: string) {
+    return [...(this.userRoomsMap.get(userId) ?? [])];
+  }
+
+  // room-member
   async getRoomMembers(roomId: string) {
     return [...(this.roomMembersMap.get(roomId) ?? [])];
   }
 
-  // user-room
-  async addRoomToUser(userId: string, roomId: string) {
+  async addRoomToMember(userId: string, roomId: string) {
     this.ensureUser(userId);
     this.ensureRoom(roomId);
 
@@ -91,7 +91,7 @@ export class SimpleRepository implements IRepository {
     this.roomMembersMap.get(roomId)?.add(userId);
   }
 
-  async removeRoomToUser(userId: string, roomId: string) {
+  async removeRoomToMember(userId: string, roomId: string) {
     this.userRoomsMap.get(userId)?.delete(roomId);
     this.roomMembersMap.get(roomId)?.delete(userId);
 
