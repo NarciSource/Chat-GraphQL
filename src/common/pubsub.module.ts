@@ -12,10 +12,12 @@ import Redis from 'ioredis';
         const host = configService.get<string>('REDIS_HOST', 'localhost');
         const port = configService.get<number>('REDIS_PORT', 6379);
 
-        return new RedisPubSub({
+        pubSubInstance = new RedisPubSub({
           publisher: new Redis({ host, port }),
           subscriber: new Redis({ host, port }),
         });
+
+        return pubSubInstance;
       },
       inject: [ConfigService],
     },
@@ -23,3 +25,7 @@ import Redis from 'ioredis';
   exports: ['PUB_SUB'],
 })
 export class PubSubModule {}
+
+// 공용 PubSub 인스턴스
+let pubSubInstance: RedisPubSub;
+export const getPubSubInstance = () => pubSubInstance;

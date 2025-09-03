@@ -25,9 +25,14 @@ import { getPubSubInstance } from './pubsub.module';
             const sessionKey = ctx.connectionParams['x-session-key'];
             console.log('connect', sessionKey);
           },
-          onDisconnect: (ctx) => {
+          onDisconnect: async (ctx) => {
             const sessionKey = ctx.connectionParams['x-session-key'];
             console.log('disconnect', sessionKey);
+
+            const pubsub = getPubSubInstance();
+            if (pubsub) {
+              await pubsub.publish('disconnect', { sessionKey });
+            }
           },
         },
       },
