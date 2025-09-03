@@ -10,25 +10,21 @@ export class UserService {
   ) {}
 
   // 등록 로직
-  async registerUser(userId: string): Promise<boolean> {
+  async registerUser(userId: string, sessionKey: string): Promise<boolean> {
     const has = await this.repository.hasUser(userId);
 
     if (has) {
       return false; // 중복
     }
 
-    await this.repository.setUser(userId);
+    await this.repository.setUser(userId, sessionKey);
 
     return true;
   }
 
-  // 유저 해제 로직
-  async disconnectUser(userId: string): Promise<void> {
-    const has = await this.repository.hasUser(userId);
-
-    if (!has) return;
-
-    await this.repository.removeUser(userId);
+  // 세션 해제 로직
+  async disconnectSession(sessionId: string): Promise<void> {
+    await this.repository.removeSession(sessionId);
   }
 
   getUsers() {

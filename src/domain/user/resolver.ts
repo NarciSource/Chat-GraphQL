@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { UserService } from './service';
@@ -20,8 +20,8 @@ export class UserResolver {
 
   // Mutations
   @Mutation(() => Boolean, { name: 'setUser' })
-  async setUser(@Args('id') id: string) {
-    await this.service.registerUser(id);
+  async setUser(@Args('id') userId: string, @Context() { sessionKey }: { sessionKey: string }) {
+    await this.service.registerUser(userId, sessionKey);
 
     await this.pubSub.publish<UserPresencePayload>('userPresence', {
       userPresence: await this.service.getUsers(),

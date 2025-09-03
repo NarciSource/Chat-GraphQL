@@ -1,8 +1,9 @@
 export default interface IRepository {
-  setUser(userId: string): Promise<void>; // 유저 등록
+  setUser(userId: string, sessionId: string): Promise<void>; // 유저-세션 등록
   hasUser(userId: string): Promise<boolean>; // 유저 존재 여부 확인
   getUsers(): Promise<string[]>; // 전체 유저 목록을 가져옴
   removeUser(userId: string): Promise<void>; // 유저 삭제
+  removeSession(sessionKey: string): Promise<void>; // 세션 삭제
 
   getRooms(): Promise<string[]>; // 전체 방 목록을 가져옴
   removeRoom(roomId: string): Promise<void>; // 방 삭제

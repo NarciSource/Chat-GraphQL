@@ -10,9 +10,9 @@ export class RedisRepository implements IRepository {
     private readonly redis: RedisClientType,
   ) {}
 
-  // key helpers
-  private userIndexKey() {
-    return 'users';
+  // Key Helpers
+  private userSessionKey(userId: string) {
+    return `user:${userId}:session`;
   }
 
   private userKey(userId: string) {
@@ -24,43 +24,67 @@ export class RedisRepository implements IRepository {
   }
 
   // user
-  async setUser(userId: string) {
-    // 유저 인덱스에 등록
-    await this.redis.sAdd(this.userIndexKey(), userId);
+  async setUser(userId: string, sessionKey: string) {
+    const userSessionKey = this.userSessionKey(userId);
+
+    await this.redis.set(userSessionKey, sessionKey);
   }
 
-  async hasUser(userId: string) {
-    return (await this.redis.sIsMember(this.userIndexKey(), userId)) === 1;
+  async hasUser(userId: string): Promise<boolean> {
+    const userSessionKey = this.userSessionKey(userId);
+
+    return (await this.redis.exists(userSessionKey)) === 1;
   }
 
   async getUsers(): Promise<string[]> {
-    return await this.redis.sMembers(this.userIndexKey());
+    const keys = await this.scanKeys('user:*:session');
+    return keys.map((key) => key.split(':')[1]);
   }
 
   async removeUser(userId: string) {
-    const userKey = this.userKey(userId);
-    const rooms = await this.redis.sMembers(userKey);
+    const userRoomsKey = this.userKey(userId);
+    const sessionKey = this.userSessionKey(userId);
+    const rooms = await this.redis.sMembers(userRoomsKey);
 
-    // 참여한 모든 방에서 유저 제거
-    const multi = this.redis.multi();
-    for (const roomId of rooms) {
-      multi.sRem(this.roomKey(roomId), userId);
+    {
+      // 참여한 모든 방에서 유저 제거
+      const multi = this.redis.multi();
+      for (const roomId of rooms) {
+        multi.sRem(this.roomKey(roomId), userId);
+      }
+
+      // 유저의 방 Set 삭제
+      multi.del(userRoomsKey);
+      // 유저의 세션 삭제
+      multi.del(sessionKey);
+
+      await multi.exec();
+    }
+  }
+
+  async removeSession(sessionKey: string) {
+    // 모든 user:{userId}:session 키 조회
+    const sessionKeys = await this.scanKeys('user:*:session');
+
+    let targetUserId: string | null = null;
+
+    for (const key of sessionKeys) {
+      const storedSessionId = await this.redis.get(key);
+      if (storedSessionId === sessionKey) {
+        // key = user:{userId}:session → userId 추출
+        targetUserId = key.split(':')[1];
+        break;
+      }
     }
 
-    // 유저의 방 Set 삭제
-    multi.del(userKey);
-
-    // 유저 인덱스에서도 제거
-    multi.sRem(this.userIndexKey(), userId);
-
-    await multi.exec();
+    await this.removeUser(targetUserId); // 기존 로직으로 유저 삭제
   }
 
   async getRoomsByUser(userId: string) {
     return this.redis.sMembers(this.userKey(userId));
   }
 
-  //room
+  // room
   async getRooms() {
     const keys = await this.scanKeys('room:*:users');
 
@@ -81,7 +105,7 @@ export class RedisRepository implements IRepository {
     }
   }
 
-  // user-room
+  // User-Room relation
   async getRoomMembers(roomId: string) {
     return await this.redis.sMembers(this.roomKey(roomId));
   }
@@ -94,7 +118,6 @@ export class RedisRepository implements IRepository {
       multi.sAdd(userKey, roomId); // 유저가 참여한 방
       multi.sAdd(roomKey, userId); // 방에 참여한 유저
 
-      multi.sAdd(this.userIndexKey(), userId); // 유저 인덱스 보장
       await multi.exec();
     }
   }
