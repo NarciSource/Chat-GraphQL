@@ -11,8 +11,8 @@ export class RedisRepository implements IRepository {
   ) {}
 
   // Key Helpers
-  private userSessionKey(userId: string) {
-    return `user:${userId}:session`;
+  private usersHashKey() {
+    return 'users'; // userId → sessionKey
   }
 
   private userKey(userId: string) {
@@ -25,25 +25,20 @@ export class RedisRepository implements IRepository {
 
   // user
   async setUser(userId: string, sessionKey: string) {
-    const userSessionKey = this.userSessionKey(userId);
-
-    await this.redis.set(userSessionKey, sessionKey);
+    await this.redis.hSet(this.usersHashKey(), userId, sessionKey);
   }
 
   async hasUser(userId: string): Promise<boolean> {
-    const userSessionKey = this.userSessionKey(userId);
-
-    return (await this.redis.exists(userSessionKey)) === 1;
+    return (await this.redis.hExists(this.usersHashKey(), userId)) === 1;
   }
 
   async getUsers(): Promise<string[]> {
-    const keys = await this.scanKeys('user:*:session');
-    return keys.map((key) => key.split(':')[1]);
+    return await this.redis.hKeys(this.usersHashKey());
   }
 
   async removeUser(userId: string) {
     const userRoomsKey = this.userKey(userId);
-    const sessionKey = this.userSessionKey(userId);
+    const sessionKey = this.usersHashKey();
     const rooms = await this.redis.sMembers(userRoomsKey);
 
     {
@@ -56,23 +51,21 @@ export class RedisRepository implements IRepository {
       // 유저의 방 Set 삭제
       multi.del(userRoomsKey);
       // 유저의 세션 삭제
-      multi.del(sessionKey);
+      multi.hDel(sessionKey, userId);
 
       await multi.exec();
     }
   }
 
   async removeSession(sessionKey: string) {
-    // 모든 user:{userId}:session 키 조회
-    const sessionKeys = await this.scanKeys('user:*:session');
+    const userIds = await this.getUsers();
 
     let targetUserId: string | null = null;
 
-    for (const key of sessionKeys) {
-      const storedSessionId = await this.redis.get(key);
+    for (const userId of userIds) {
+      const storedSessionId = await this.redis.hGet(this.usersHashKey(), userId);
       if (storedSessionId === sessionKey) {
-        // key = user:{userId}:session → userId 추출
-        targetUserId = key.split(':')[1];
+        targetUserId = userId;
         break;
       }
     }
@@ -81,7 +74,7 @@ export class RedisRepository implements IRepository {
   }
 
   async getRoomsByUser(userId: string) {
-    return this.redis.sMembers(this.userKey(userId));
+    return await this.redis.sMembers(this.userKey(userId));
   }
 
   // room
@@ -132,7 +125,7 @@ export class RedisRepository implements IRepository {
 
       // 방이 비게 되면 방 Set 삭제
       const roomCard = await this.redis.sCard(roomKey);
-      if (roomCard === 1) {
+      if (roomCard === 0) {
         multi.del(roomKey);
       }
 

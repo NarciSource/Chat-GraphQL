@@ -5,7 +5,7 @@ import IRepository from './interface';
 
 @Injectable()
 export class SimpleRepository implements IRepository {
-  private userSessionMap: Map<string, string> = new Map();
+  private userSessions: { [Key: string]: string } = {};
   private userRoomsMap: Map<string, Set<string>> = new Map();
   private roomMembersMap: Map<string, Set<string>> = new Map();
 
@@ -23,15 +23,15 @@ export class SimpleRepository implements IRepository {
 
   // user
   async setUser(userId: string, sessionKey: string) {
-    this.userSessionMap.set(userId, sessionKey);
+    this.userSessions[userId] = sessionKey;
   }
 
   async hasUser(userId: string) {
-    return this.userSessionMap.has(userId);
+    return !!this.userSessions[userId];
   }
 
   async getUsers() {
-    return [...this.userSessionMap.keys()];
+    return Object.keys(this.userSessions);
   }
 
   async removeUser(userId: string) {
@@ -43,16 +43,19 @@ export class SimpleRepository implements IRepository {
     }
 
     this.userRoomsMap.delete(userId);
-    this.userSessionMap.delete(userId);
+    delete this.userSessions[userId];
   }
 
   async removeSession(sessionKey: string) {
-    for (const [userId, storedKey] of this.userSessionMap.entries()) {
+    let targetUserId: string | null = null;
+
+    for (const [userId, storedKey] of Object.entries(this.userSessions)) {
       if (storedKey === sessionKey) {
-        this.userSessionMap.delete(userId);
+        targetUserId = userId;
         break;
       }
     }
+    delete this.userSessions[targetUserId];
   }
 
   async getRoomsByUser(userId: string) {
