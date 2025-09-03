@@ -5,6 +5,7 @@ import IRepository from './interface';
 
 @Injectable()
 export class SimpleRepository implements IRepository {
+  private userSessions: { [Key: string]: string } = {};
   private userRoomsMap: Map<string, Set<string>> = new Map();
   private roomMembersMap: Map<string, Set<string>> = new Map();
 
@@ -21,16 +22,16 @@ export class SimpleRepository implements IRepository {
   }
 
   // user
-  async setUser(userId: string) {
-    this.ensureUser(userId);
+  async setUser(userId: string, sessionKey: string) {
+    this.userSessions[userId] = sessionKey;
   }
 
   async hasUser(userId: string) {
-    return this.userRoomsMap.has(userId);
+    return !!this.userSessions[userId];
   }
 
   async getUsers() {
-    return [...this.userRoomsMap.keys()];
+    return Object.keys(this.userSessions);
   }
 
   async removeUser(userId: string) {
@@ -42,10 +43,19 @@ export class SimpleRepository implements IRepository {
     }
 
     this.userRoomsMap.delete(userId);
+    delete this.userSessions[userId];
   }
 
-  async getRoomsByUser(userId: string) {
-    return [...(this.userRoomsMap.get(userId) ?? [])];
+  async removeSession(sessionKey: string) {
+    let targetUserId: string | null = null;
+
+    for (const [userId, storedKey] of Object.entries(this.userSessions)) {
+      if (storedKey === sessionKey) {
+        targetUserId = userId;
+        break;
+      }
+    }
+    delete this.userSessions[targetUserId];
   }
 
   // room
@@ -64,12 +74,16 @@ export class SimpleRepository implements IRepository {
     this.roomMembersMap.delete(roomId);
   }
 
+  async getRoomsByUser(userId: string) {
+    return [...(this.userRoomsMap.get(userId) ?? [])];
+  }
+
+  // room-member
   async getRoomMembers(roomId: string) {
     return [...(this.roomMembersMap.get(roomId) ?? [])];
   }
 
-  // user-room
-  async addRoomToUser(userId: string, roomId: string) {
+  async addRoomToMember(userId: string, roomId: string) {
     this.ensureUser(userId);
     this.ensureRoom(roomId);
 
@@ -77,7 +91,7 @@ export class SimpleRepository implements IRepository {
     this.roomMembersMap.get(roomId)?.add(userId);
   }
 
-  async removeRoomToUser(userId: string, roomId: string) {
+  async removeRoomToMember(userId: string, roomId: string) {
     this.userRoomsMap.get(userId)?.delete(roomId);
     this.roomMembersMap.get(roomId)?.delete(userId);
 
