@@ -15,16 +15,22 @@ import { App } from "vue";
 
 import { setApolloClient } from "@/shared/lib/apolloClient";
 
+const sessionKey = crypto.randomUUID(); // 임의로 생성된 세션 키
+
 const HTTP_SERVER_URL = import.meta.env.VITE_GRAPHQL_SERVER_URL;
 const WS_SERVER_URL = HTTP_SERVER_URL.replace(/^http:\/\//, "ws://").replace(
   /^https:\/\//,
   "wss://",
 );
 
-const httpLink = new HttpLink({ uri: HTTP_SERVER_URL });
+const httpLink = new HttpLink({
+  uri: HTTP_SERVER_URL,
+  headers: { "x-session-key": sessionKey },
+});
 const wsLink = new GraphQLWsLink(
   createClient({
     url: WS_SERVER_URL,
+    connectionParams: { "x-session-key": sessionKey },
   }),
 );
 
