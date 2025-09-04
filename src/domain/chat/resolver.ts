@@ -3,12 +3,14 @@ import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { Message, MessagePayload, SystemInput, SystemPayload, TypingPayload } from './model';
+import ChatService from './service';
 
 @Resolver()
 export default class ChatResolver {
   constructor(
     @Inject('PUB_SUB')
     private pubSub: RedisPubSub,
+    private readonly service: ChatService,
   ) {}
 
   // Mutations
@@ -18,8 +20,11 @@ export default class ChatResolver {
     @Args('userId') userId: string,
     @Args('content') content: string,
   ) {
+    const participants = await this.service.getPartitions(roomId);
+
     await this.pubSub.publish<MessagePayload>('message', {
       message: { roomId, userId, content },
+      participants,
     });
 
     return true;
@@ -37,10 +42,10 @@ export default class ChatResolver {
   // Subscriptions
   @Subscription(() => Message, {
     name: 'message',
-    filter: (payload: MessagePayload, { roomId }: { roomId: string }) =>
-      payload.message.roomId === roomId,
+    filter: (payload: MessagePayload, { userId }: { userId: string }) =>
+      payload.participants.includes(userId),
   })
-  receiveMessage(@Args('roomId') roomId: string) {
+  receiveMessage(@Args('userId') userId: string) {
     return this.pubSub.asyncIterator<MessagePayload>('message');
   }
 

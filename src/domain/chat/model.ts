@@ -21,6 +21,6 @@ export class SystemInput {
   roomId?: string;
 }
 
-export type MessagePayload = { message: Message };
+export type MessagePayload = { message: Message; participants: string[] };
 export type SystemPayload = { system: Message };
 export type TypingPayload = { typing: Message };

@@ -27,7 +27,7 @@ type Room {
 }
 
 type Subscription {
-  message(roomId: String!): Message!
+  message(userId: String!): Message!
   roomCreated(userId: String!): Room!
   system(input: SystemInput!): Message!
   typing(roomId: String!): Message!
