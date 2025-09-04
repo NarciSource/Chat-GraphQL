@@ -24,11 +24,11 @@ import {
 } from "../api/hooks";
 import useChatStore from "../store/useChatStore";
 
-const { room, connecting } = storeToRefs(useChatStore());
+const { current_user, room, connecting } = storeToRefs(useChatStore());
 const { insert_message, alarm_typing } = useChatStore();
 
 const { result: message_result } = useReceiveMessageSubscription(() => ({
-  roomId: room.value!.id!,
+  userId: current_user.value!.id!,
 }));
 const { result: system_result } = useSystemSubscription(() => ({
   input: { roomId: room!.value!.id! },
@@ -48,16 +48,16 @@ watch(room, () => {
 watch(message_result, (result) => {
   if (!result) return;
 
-  const { userId, content } = result.message;
-  insert_message(new Message(new User(userId), [content ?? ""]));
+  const { roomId, userId, content } = result.message;
+  insert_message(new Message(new User(userId), [content ?? ""]), roomId);
 });
 
 // 시스템 메시지 수신
 watch(system_result, (result) => {
   if (!result) return;
 
-  const { content } = result.system;
-  insert_message(new Message(new User("System"), [content ?? ""]));
+  const { roomId, content } = result.system;
+  insert_message(new Message(new User("System"), [content ?? ""]), roomId);
 });
 
 // 타이핑 이벤트 수신

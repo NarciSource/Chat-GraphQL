@@ -1,5 +1,6 @@
-subscription receiveMessage($roomId: String!) {
-  message(roomId: $roomId) {
+subscription receiveMessage($userId: String!) {
+  message(userId: $userId) {
+    roomId
     userId
     content
   }

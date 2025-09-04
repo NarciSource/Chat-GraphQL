@@ -91,8 +91,9 @@ export function useOnTypingSubscription(variables: Ops.OnTypingSubscriptionVaria
 }
 export type OnTypingSubscriptionCompositionFunctionResult = VueApolloComposable.UseSubscriptionReturn<Ops.OnTypingSubscription, Ops.OnTypingSubscriptionVariables>;
 export const ReceiveMessageDocument = gql`
-    subscription receiveMessage($roomId: String!) {
-  message(roomId: $roomId) {
+    subscription receiveMessage($userId: String!) {
+  message(userId: $userId) {
+    roomId
     userId
     content
   }
@@ -111,7 +112,7 @@ export const ReceiveMessageDocument = gql`
  *
  * @example
  * const { result, loading, error } = useReceiveMessageSubscription({
- *   roomId: // value for 'roomId'
+ *   userId: // value for 'userId'
  * });
  */
 export function useReceiveMessageSubscription(variables: Ops.ReceiveMessageSubscriptionVariables | VueCompositionApi.Ref<Ops.ReceiveMessageSubscriptionVariables> | ReactiveFunction<Ops.ReceiveMessageSubscriptionVariables>, options: VueApolloComposable.UseSubscriptionOptions<Ops.ReceiveMessageSubscription, Ops.ReceiveMessageSubscriptionVariables> | VueCompositionApi.Ref<VueApolloComposable.UseSubscriptionOptions<Ops.ReceiveMessageSubscription, Ops.ReceiveMessageSubscriptionVariables>> | ReactiveFunction<VueApolloComposable.UseSubscriptionOptions<Ops.ReceiveMessageSubscription, Ops.ReceiveMessageSubscriptionVariables>> = {}) {

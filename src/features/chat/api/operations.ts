@@ -25,11 +25,11 @@ export type OnTypingSubscriptionVariables = SchemaTypes.Exact<{
 export type OnTypingSubscription = { __typename?: 'Subscription', typing: { __typename?: 'Message', userId: string, roomId: string } };
 
 export type ReceiveMessageSubscriptionVariables = SchemaTypes.Exact<{
-  roomId: SchemaTypes.Scalars['String']['input'];
+  userId: SchemaTypes.Scalars['String']['input'];
 }>;
 
 
-export type ReceiveMessageSubscription = { __typename?: 'Subscription', message: { __typename?: 'Message', userId: string, content?: string | null } };
+export type ReceiveMessageSubscription = { __typename?: 'Subscription', message: { __typename?: 'Message', roomId: string, userId: string, content?: string | null } };
 
 export type SystemSubscriptionVariables = SchemaTypes.Exact<{
   input: SchemaTypes.SystemInput;

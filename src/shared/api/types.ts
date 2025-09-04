@@ -89,7 +89,7 @@ export type Subscription = {
 
 
 export type SubscriptionMessageArgs = {
-  roomId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 
