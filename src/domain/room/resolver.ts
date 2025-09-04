@@ -2,11 +2,11 @@ import { Inject } from '@nestjs/common';
 import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-import { Room, RoomPayload } from './model';
-import { RoomService } from './service';
+import Room, { RoomPayload } from './model';
+import RoomService from './service';
 
 @Resolver()
-export class RoomResolver {
+export default class RoomResolver {
   constructor(
     @Inject('PUB_SUB') private pubSub: RedisPubSub,
     private readonly service: RoomService,

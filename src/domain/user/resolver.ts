@@ -2,11 +2,11 @@ import { Inject } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-import { UserService } from './service';
 import { UserPresencePayload } from './model';
+import UserService from './service';
 
 @Resolver()
-export class UserResolver {
+export default class UserResolver {
   constructor(
     @Inject('PUB_SUB') private pubSub: RedisPubSub,
     private readonly service: UserService,

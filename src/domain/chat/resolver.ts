@@ -5,8 +5,11 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Message, MessagePayload, SystemInput, SystemPayload, TypingPayload } from './model';
 
 @Resolver()
-export class ChatResolver {
-  constructor(@Inject('PUB_SUB') private pubSub: RedisPubSub) {}
+export default class ChatResolver {
+  constructor(
+    @Inject('PUB_SUB')
+    private pubSub: RedisPubSub,
+  ) {}
 
   // Mutations
   @Mutation(() => Boolean, { name: 'message' })

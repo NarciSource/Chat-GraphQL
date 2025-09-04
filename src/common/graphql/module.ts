@@ -6,7 +6,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
-import { getPubSubInstance } from './pubsub.module';
+import { getPubSubInstance } from '../redis/pubsub.provider';
 
 const logger = new Logger('GraphQLModule');
 

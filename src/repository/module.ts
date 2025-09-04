@@ -1,14 +1,12 @@
-import { Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+import { Global, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
-import { RedisModule } from '../common/redis.module';
-import { RedisRepository } from './redis';
-import { SimpleRepository } from './simple';
+import RedisRepository from './redis';
+import SimpleRepository from './simple';
 
+@Global()
 @Module({
-  imports: [RedisModule],
-
   providers: [
     {
       provide: 'IRepository', // 추상 레포지토리
@@ -29,4 +27,4 @@ import { SimpleRepository } from './simple';
 
   exports: ['IRepository'], // 다른 모듈에서는 인터페이스를 사용하여 의존성 주입을 받을 수 있도록 export
 })
-export class RepositoryModule {}
+export default class RepositoryModule {}

@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import GraphQLModule from 'src/common/graphql.module';
-import { PubSubModule } from 'src/common/pubsub.module';
-import { UserModule } from 'src/domain/user/module';
-import { RoomModule } from 'src/domain/room/module';
-import { ChatModule } from 'src/domain/chat/module';
-import { RepositoryModule } from 'src/repository/module';
+import { GraphQLModule } from 'src/common/graphql';
+import { RedisModule } from 'src/common/redis';
+import { UserModule } from 'src/domain/user';
+import { RoomModule } from 'src/domain/room';
+import { ChatModule } from 'src/domain/chat';
+import { RepositoryModule } from 'src/repository';
 import { HealthCheckController } from './controller';
 
 @Module({
@@ -14,7 +14,7 @@ import { HealthCheckController } from './controller';
     ConfigModule.forRoot({ isGlobal: true }),
 
     GraphQLModule,
-    PubSubModule,
+    RedisModule,
 
     RepositoryModule,
 
@@ -23,6 +23,5 @@ import { HealthCheckController } from './controller';
     RoomModule,
   ],
   controllers: [HealthCheckController],
-  providers: [],
 })
 export class CoreModule {}
