@@ -1,22 +1,17 @@
-import { Global } from '@nestjs/common';
+import { Global, Inject } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 
-import { redis } from 'src/common/redis/streamIterator';
+import { RedisStreams } from 'src/common/redis';
 import StreamsPublishEvent from './StreamsPublish.event';
 
 @Global()
 @EventsHandler(StreamsPublishEvent)
 export default class StreamsPublishHandler<T> implements IEventHandler<StreamsPublishEvent<T>> {
-  constructor() {}
+  constructor(
+    @Inject('REDIS_STREAMS')
+    private streams: RedisStreams,
+  ) {}
   async handle({ trigger, payload }: StreamsPublishEvent<T>) {
-    const stringified = Object.fromEntries(
-      Object.entries(payload).map(([key, value]) => [key, JSON.stringify(value)]),
-    );
-
-    await redis.xadd(
-      trigger,
-      '*', // 자동 ID 생성
-      ...Object.entries(stringified).flat(), // key-value 순으로 평탄화
-    );
+    await this.streams.publish<T>(trigger, payload);
   }
 }
