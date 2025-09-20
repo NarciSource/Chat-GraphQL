@@ -1,7 +1,7 @@
 import { EventBus, QueryBus } from '@nestjs/cqrs';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
-import { PubSubPublishEvent } from 'src/domain/shared/events';
+import { PubSubPublishEvent, StreamsPublishEvent } from 'src/domain/shared/events';
 import { MessagePayload, TypingPayload } from '../model';
 import { GetPartitionsQuery } from '../queries';
 
@@ -21,7 +21,7 @@ export default class ChatMutationResolver {
     const query = new GetPartitionsQuery(roomId);
     const participants = await this.queryBus.execute(query);
 
-    const event = new PubSubPublishEvent<MessagePayload>('message', {
+    const event = new StreamsPublishEvent<MessagePayload>('message', {
       message: { roomId, userId, content },
       participants,
     });

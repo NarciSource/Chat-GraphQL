@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common';
 import { Args, Resolver, Subscription } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
+import { streamIterator } from 'src/common/redis/streamIterator';
 import { Message, MessagePayload, SystemInput, SystemPayload, TypingPayload } from '../model';
 
 @Resolver()
@@ -17,7 +18,7 @@ export default class ChatSubscriptionResolver {
       payload.participants.includes(userId),
   })
   receiveMessage(@Args('userId') userId: string) {
-    return this.pubSub.asyncIterator<MessagePayload>('message');
+    return streamIterator<MessagePayload>('message');
   }
 
   @Subscription(() => Message, {
