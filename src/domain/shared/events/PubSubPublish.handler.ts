@@ -8,7 +8,7 @@ import PubSubPublishEvent from './PubSubPublish.event';
 @EventsHandler(PubSubPublishEvent)
 export default class PubSubPublishHandler<T> implements IEventHandler<PubSubPublishEvent<T>> {
   constructor(
-    @Inject('PUB_SUB')
+    @Inject('REDIS_PUBSUB')
     private readonly pubSub: RedisPubSub,
   ) {}
   async handle({ trigger, payload }: PubSubPublishEvent<T>) {

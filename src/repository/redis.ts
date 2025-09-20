@@ -6,7 +6,7 @@ import Redis from 'ioredis';
 @Injectable()
 export default class RedisRepository implements IRepository {
   constructor(
-    @Inject('REDIS_CLIENT')
+    @Inject('REDIS_STORAGE')
     private readonly redis: Redis,
   ) {}
 

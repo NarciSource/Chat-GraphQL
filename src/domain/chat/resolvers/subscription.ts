@@ -8,7 +8,7 @@ import { Message, MessagePayload, SystemInput, SystemPayload, TypingPayload } fr
 @Resolver()
 export default class ChatSubscriptionResolver {
   constructor(
-    @Inject('PUB_SUB')
+    @Inject('REDIS_PUBSUB')
     private pubSub: RedisPubSub,
     @Inject('REDIS_STREAMS')
     private streams: RedisStreams,

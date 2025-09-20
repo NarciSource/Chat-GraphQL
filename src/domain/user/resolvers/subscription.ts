@@ -6,7 +6,7 @@ import { UserPresencePayload } from '../model';
 
 @Resolver()
 export default class UserSubscriptionResolver {
-  constructor(@Inject('PUB_SUB') private pubSub: RedisPubSub) {}
+  constructor(@Inject('REDIS_PUBSUB') private pubSub: RedisPubSub) {}
 
   @Subscription(() => [String], { name: 'userPresence' })
   userPresence() {

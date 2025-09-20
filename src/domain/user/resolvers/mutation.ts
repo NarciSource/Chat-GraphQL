@@ -13,7 +13,7 @@ export default class UserMutationResolver {
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
 
-    @Inject('PUB_SUB') private pubSub: RedisPubSub,
+    @Inject('REDIS_PUBSUB') private pubSub: RedisPubSub,
   ) {
     void this.listenToDisconnect();
   }

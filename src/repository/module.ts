@@ -21,7 +21,7 @@ import SimpleRepository from './simple';
             return new RedisRepository(redisClient);
         }
       },
-      inject: [ConfigService, 'REDIS_CLIENT'],
+      inject: [ConfigService, 'REDIS_STORAGE'],
     },
   ],
 

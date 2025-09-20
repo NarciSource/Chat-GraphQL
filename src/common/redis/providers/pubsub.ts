@@ -4,7 +4,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 export default {
-  provide: 'PUB_SUB',
+  provide: 'REDIS_PUBSUB',
   useFactory: async (configService: ConfigService) => {
     const logger = new Logger('RedisPubSub');
     const host = configService.get<string>('REDIS_HOST', 'localhost');

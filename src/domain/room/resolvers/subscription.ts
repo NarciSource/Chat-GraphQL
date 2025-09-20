@@ -6,7 +6,7 @@ import Room, { RoomPayload } from '../model';
 
 @Resolver()
 export default class RoomSubscriptionResolver {
-  constructor(@Inject('PUB_SUB') private pubSub: RedisPubSub) {}
+  constructor(@Inject('REDIS_PUBSUB') private pubSub: RedisPubSub) {}
 
   @Subscription(() => Room, {
     name: 'roomCreated',
