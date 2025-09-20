@@ -1,45 +1,16 @@
 import { Inject } from '@nestjs/common';
-import { Args, Mutation, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Resolver, Subscription } from '@nestjs/graphql';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-import { Message, MessagePayload, SystemInput, SystemPayload, TypingPayload } from './model';
-import ChatService from './service';
+import { Message, MessagePayload, SystemInput, SystemPayload, TypingPayload } from '../model';
 
 @Resolver()
-export default class ChatResolver {
+export default class ChatSubscriptionResolver {
   constructor(
     @Inject('PUB_SUB')
     private pubSub: RedisPubSub,
-    private readonly service: ChatService,
   ) {}
 
-  // Mutations
-  @Mutation(() => Boolean, { name: 'message' })
-  async sendMessage(
-    @Args('roomId') roomId: string,
-    @Args('userId') userId: string,
-    @Args('content') content: string,
-  ) {
-    const participants = await this.service.getPartitions(roomId);
-
-    await this.pubSub.publish<MessagePayload>('message', {
-      message: { roomId, userId, content },
-      participants,
-    });
-
-    return true;
-  }
-
-  @Mutation(() => Boolean, { name: 'typing' })
-  async typing(@Args('roomId') roomId: string, @Args('userId') userId: string) {
-    await this.pubSub.publish<TypingPayload>('typing', {
-      typing: { roomId, userId },
-    });
-
-    return true;
-  }
-
-  // Subscriptions
   @Subscription(() => Message, {
     name: 'message',
     filter: (payload: MessagePayload, { userId }: { userId: string }) =>

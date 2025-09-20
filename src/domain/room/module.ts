@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 
-import RoomResolver from './resolver';
-import RoomService from './service';
+import { RepositoryModule } from 'src/repository';
+import * as commands from './commands';
+import { RoomMutationResolver, RoomSubscriptionResolver } from './resolvers';
 
 @Module({
-  providers: [RoomResolver, RoomService],
+  imports: [CqrsModule, RepositoryModule],
+  providers: [RoomMutationResolver, RoomSubscriptionResolver, ...Object.values(commands)],
 })
 export default class RoomModule {}

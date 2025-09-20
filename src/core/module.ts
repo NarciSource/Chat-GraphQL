@@ -3,10 +3,10 @@ import { ConfigModule } from '@nestjs/config';
 
 import { GraphQLModule } from 'src/common/graphql';
 import { RedisModule } from 'src/common/redis';
+import * as events from 'src/domain/shared/events';
 import { UserModule } from 'src/domain/user';
 import { RoomModule } from 'src/domain/room';
 import { ChatModule } from 'src/domain/chat';
-import { RepositoryModule } from 'src/repository';
 import { HealthCheckController } from './controller';
 
 @Module({
@@ -16,8 +16,7 @@ import { HealthCheckController } from './controller';
     GraphQLModule,
     RedisModule,
 
-    RepositoryModule,
-
+    ...Object.values(events),
     UserModule,
     ChatModule,
     RoomModule,

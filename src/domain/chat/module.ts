@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 
-import ChatResolver from './resolver';
-import ChatService from './service';
+import { RepositoryModule } from 'src/repository';
+import { ChatMutationResolver, ChatSubscriptionResolver } from './resolvers';
+import * as queries from './queries';
 
 @Module({
-  providers: [ChatResolver, ChatService],
+  imports: [CqrsModule, RepositoryModule],
+  providers: [ChatMutationResolver, ChatSubscriptionResolver, ...Object.values(queries)],
 })
 export default class ChatModule {}
