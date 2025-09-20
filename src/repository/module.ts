@@ -2,8 +2,8 @@ import Redis from 'ioredis';
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import RedisRepository from './redis';
-import SimpleRepository from './simple';
+import InMemoryRepository from './InMemoryRepository';
+import DatabaseRepository from './DatabaseRepository';
 
 @Global()
 @Module({
@@ -15,10 +15,10 @@ import SimpleRepository from './simple';
         const repositoryType = ConfigService.get<string>('REPOSITORY_TYPE', 'simple');
 
         switch (repositoryType) {
-          case 'simple':
-            return new SimpleRepository();
-          case 'redis':
-            return new RedisRepository(redisClient);
+          case 'InMemory':
+            return new InMemoryRepository();
+          case 'Database':
+            return new DatabaseRepository(redisClient);
         }
       },
       inject: [ConfigService, 'REDIS_STORAGE'],

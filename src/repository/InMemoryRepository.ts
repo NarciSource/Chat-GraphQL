@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import IRepository from './interface';
 
 @Injectable()
-export default class SimpleRepository implements IRepository {
+export default class InMemoryRepository implements IRepository {
   private userSessions: { [Key: string]: string } = {};
   private userRoomsMap: Map<string, Set<string>> = new Map();
   private roomMembersMap: Map<string, Set<string>> = new Map();
