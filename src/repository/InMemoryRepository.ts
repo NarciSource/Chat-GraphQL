@@ -99,4 +99,8 @@ export default class InMemoryRepository implements IRepository {
       this.roomMembersMap.delete(roomId);
     }
   }
+
+  async getMessageHistory(_roomId: string) {
+    return [];
+  }
 }

@@ -1,14 +1,31 @@
+import Redis from 'ioredis';
+import dynamoose from 'dynamoose';
+import { Item } from 'dynamoose/dist/Item';
+import { Model } from 'dynamoose/dist/Model';
+import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable } from '@nestjs/common';
 
+import { dynamoSchemaDefinition, Message } from 'src/model/schemaDefinition';
 import IRepository from './interface';
-import Redis from 'ioredis';
 
 @Injectable()
 export default class DatabaseRepository implements IRepository {
+  private dynamoModel: Model<Message & Item>;
+
   constructor(
+    configService: ConfigService,
+
     @Inject('REDIS_STORAGE')
     private readonly redis: Redis,
-  ) {}
+    @Inject('DYNAMO_STORAGE')
+    private readonly dynamo: typeof dynamoose,
+  ) {
+    const table = configService.get<string>('DYNAMO_TABLE', 'ChatMessages');
+
+    const schema = new dynamo.Schema(dynamoSchemaDefinition);
+
+    this.dynamoModel = this.dynamo.model(table, schema);
+  }
 
   // Key Helpers
   private usersHashKey = () => 'users'; // userId → sessionKey
@@ -125,6 +142,20 @@ export default class DatabaseRepository implements IRepository {
 
       await multi.exec();
     }
+  }
+
+  async getMessageHistory(roomId: string): Promise<Message[]> {
+    const response = await this.dynamoModel
+      .query('roomId')
+      .eq(roomId)
+      .using('roomId-createdAt-index')
+      .exec();
+
+    return response.map(({ userId, content, createdAt }) => ({
+      userId,
+      content,
+      createdAt,
+    }));
   }
 
   // Redis SCAN helper

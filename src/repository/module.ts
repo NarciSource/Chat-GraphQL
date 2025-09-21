@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
+import * as dynamoose from 'dynamoose';
 import { Global, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -10,18 +11,22 @@ import DatabaseRepository from './DatabaseRepository';
   providers: [
     {
       provide: 'IRepository', // 추상 레포지토리
-      useFactory: (ConfigService: ConfigService, redisClient: Redis) => {
+      useFactory: (
+        configService: ConfigService,
+        redisClient: Redis,
+        dynamoClient: typeof dynamoose,
+      ) => {
         // 구현체를 선택하는 팩토리 함수
-        const repositoryType = ConfigService.get<string>('REPOSITORY_TYPE', 'simple');
+        const repositoryType = configService.get<string>('REPOSITORY_TYPE', 'InMemory');
 
         switch (repositoryType) {
           case 'InMemory':
             return new InMemoryRepository();
           case 'Database':
-            return new DatabaseRepository(redisClient);
+            return new DatabaseRepository(configService, redisClient, dynamoClient);
         }
       },
-      inject: [ConfigService, 'REDIS_STORAGE'],
+      inject: [ConfigService, 'REDIS_STORAGE', 'DYNAMO_STORAGE'],
     },
   ],
 
