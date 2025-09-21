@@ -73,7 +73,7 @@ export type MutationTypingArgs = {
 export type Query = {
   __typename?: 'Query';
   history: Array<Message>;
-  getUsers: Array<Scalars['String']['output']>;
+  users: Array<Scalars['String']['output']>;
 };
 
 
