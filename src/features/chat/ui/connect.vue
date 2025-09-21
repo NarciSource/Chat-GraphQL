@@ -18,6 +18,7 @@ import { storeToRefs } from "pinia";
 
 import { Message, User } from "@/entities/chat/model";
 import {
+  useGetHistoryQuery,
   useOnTypingSubscription,
   useReceiveMessageSubscription,
   useSystemSubscription,
@@ -25,7 +26,7 @@ import {
 import useChatStore from "../store/useChatStore";
 
 const { current_user, room, connecting } = storeToRefs(useChatStore());
-const { insert_message, alarm_typing } = useChatStore();
+const { insert_message, alarm_typing, update_messages } = useChatStore();
 
 const { result: message_result } = useReceiveMessageSubscription(() => ({
   userId: current_user.value!.id!,
@@ -34,6 +35,9 @@ const { result: system_result } = useSystemSubscription(() => ({
   input: { roomId: room!.value!.id! },
 }));
 const { result: typing_result } = useOnTypingSubscription(() => ({
+  roomId: room!.value!.id!,
+}));
+const { result: history_result } = useGetHistoryQuery(() => ({
   roomId: room!.value!.id!,
 }));
 
@@ -65,5 +69,18 @@ watch(typing_result, (result) => {
   if (!result) return;
 
   alarm_typing(result.typing.userId!);
+});
+
+// 메시지 기록 수신
+watch(history_result, (result) => {
+  if (!result) return;
+
+  update_messages({
+    roomId: room!.value!.id!,
+    incoming_messages: result.history.map(
+      ({ userId, content, createdAt }) =>
+        new Message(new User(userId), [content ?? ""], false, new Date(createdAt)),
+    ),
+  });
 });
 </script>
