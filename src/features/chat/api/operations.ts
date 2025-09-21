@@ -17,6 +17,13 @@ export type SendTypingMutationVariables = SchemaTypes.Exact<{
 
 export type SendTypingMutation = { __typename?: 'Mutation', typing: boolean };
 
+export type GetHistoryQueryVariables = SchemaTypes.Exact<{
+  roomId: SchemaTypes.Scalars['String']['input'];
+}>;
+
+
+export type GetHistoryQuery = { __typename?: 'Query', history: Array<{ __typename?: 'Message', userId: string, content?: string | null, createdAt?: any | null }> };
+
 export type OnTypingSubscriptionVariables = SchemaTypes.Exact<{
   roomId: SchemaTypes.Scalars['String']['input'];
 }>;
