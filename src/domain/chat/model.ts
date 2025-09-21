@@ -10,6 +10,9 @@ export class Message {
 
   @Field({ nullable: true })
   content?: string;
+
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date;
 }
 
 @InputType()
