@@ -2,10 +2,10 @@ import { Inject } from '@nestjs/common';
 import { CommandHandler, ICommandHandler, EventBus } from '@nestjs/cqrs';
 
 import { IRepository } from 'src/repository';
-import JoinRoomCommand from './JoinRoom.command';
 import { PubSubPublishEvent } from 'src/domain/shared/events';
 import { SystemPayload } from 'src/domain/chat/model';
 import { RoomPayload } from '../model';
+import JoinRoomCommand from './JoinRoom.command';
 
 @CommandHandler(JoinRoomCommand)
 export default class JoinRoomHandler implements ICommandHandler<JoinRoomCommand> {
@@ -30,6 +30,7 @@ export default class JoinRoomHandler implements ICommandHandler<JoinRoomCommand>
       const systemEvent = new PubSubPublishEvent<SystemPayload>('system', {
         system: { roomId, userId, content: `유저 ${userId}가 방에 참여했습니다.` },
       });
+
       await this.eventBus.publishAll([roomCreatedEvent, systemEvent]);
     }
 

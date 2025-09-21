@@ -7,7 +7,7 @@ import { GetUsersQuery } from '../queries';
 export default class UserQueryResolver {
   constructor(private readonly queryBus: QueryBus) {}
 
-  @Query(() => [String], { name: 'getUsers' })
+  @Query(() => [String], { name: 'users' })
   async getUsers() {
     const query = new GetUsersQuery();
     return await this.queryBus.execute(query);
