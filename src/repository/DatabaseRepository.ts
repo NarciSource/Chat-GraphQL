@@ -2,6 +2,7 @@ import Redis from 'ioredis';
 import dynamoose from 'dynamoose';
 import { Item } from 'dynamoose/dist/Item';
 import { Model } from 'dynamoose/dist/Model';
+import { DynamoDBServiceException } from '@aws-sdk/client-dynamodb';
 import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable } from '@nestjs/common';
 
@@ -24,7 +25,11 @@ export default class DatabaseRepository implements IRepository {
 
     const schema = new dynamo.Schema(dynamoSchemaDefinition);
 
-    this.dynamoModel = this.dynamo.model(table, schema);
+    this.dynamoModel = this.dynamo.model(table, schema, {
+      create: false,
+      update: false,
+      waitForActive: false,
+    });
   }
 
   // Key Helpers
@@ -145,17 +150,26 @@ export default class DatabaseRepository implements IRepository {
   }
 
   async getMessageHistory(roomId: string): Promise<Message[]> {
-    const response = await this.dynamoModel
-      .query('roomId')
-      .eq(roomId)
-      .using('roomId-createdAt-index')
-      .exec();
+    try {
+      const response = await this.dynamoModel
+        .query('roomId')
+        .eq(roomId)
+        .using('roomId-createdAt-index')
+        .exec();
 
-    return response.map(({ userId, content, createdAt }) => ({
-      userId,
-      content,
-      createdAt,
-    }));
+      return response.map(({ userId, content, createdAt }) => ({
+        userId,
+        content,
+        createdAt: new Date(createdAt),
+      }));
+    } catch (error: unknown) {
+      if (error instanceof DynamoDBServiceException) {
+        if (error.name === 'ResourceNotFoundException') {
+          return [];
+        }
+      }
+      throw error;
+    }
   }
 
   // Redis SCAN helper
