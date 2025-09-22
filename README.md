@@ -83,6 +83,7 @@ classDiagram
         +subscribeMessage() // 채팅 메시지 구독
         +subscribeTyping() // 타이핑 상태 구독
         +subscribeUserPresence() // 사용자 상태 구독
+        +queryGetHistory() // 메시지 기록 요청
         +mutationCreateRoom() // 방 생성 요청
         +mutationJoinRoom() // 방 참가 요청
         +mutationLeaveRoom() // 방 퇴장 요청
@@ -92,6 +93,7 @@ classDiagram
 
     class ApolloServer {
         +schema // Query, Mutation, Subscription 정의
+        +Query.getChatHistory() : [Message!]!
         +Mutation.createRoom() : String!
         +Mutation.joinRoom() : Boolean!
         +Mutation.leaveRoom() : Boolean!
@@ -174,6 +176,8 @@ client
 │  │  ├─ chat
 │  │  │  ├─ index.vue
 │  │  │  ├─ api
+│  │  │  │  ├─ quries # GraphQL 쿼리
+│  │  │  │  │  └─ getHistory.gql
 │  │  │  │  ├─ mutations # GraphQL 뮤테이션
 │  │  │  │  │  ├─ sendMessage.gql
 │  │  │  │  │  └─ sendTyping.gql
@@ -268,6 +272,8 @@ client
 │        ├─ tokens.ts # 토큰 3종
 │        └─ getUser.ts # 접속 유저 정보 불러오기
 ├─ codegen.yml # GraphQL 훅 생성기
+├─ Dockerfile # 도커파일
+│  └─ nginx.conf # 정적 파일 제공
 ├─ package.json # 의존성 설정
 │  ├─ .prettierrc # 포맷터 설정
 │  ├─ eslint.config.js # 린트 설정
