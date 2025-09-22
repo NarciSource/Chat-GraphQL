@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, InputType, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Message {
@@ -11,7 +11,7 @@ export class Message {
   @Field({ nullable: true })
   content?: string;
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date;
 }
 
