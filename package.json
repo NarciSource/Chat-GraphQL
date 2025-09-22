@@ -1,6 +1,6 @@
 {
   "name": "chat-service--backend",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "description": "채팅 서비스 백엔드",
   "author": "NarciSource",
   "private": true,
