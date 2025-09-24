@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import IRepository from './interface';
 
 @Injectable()
-export class SimpleRepository implements IRepository {
+export default class InMemoryRepository implements IRepository {
   private userSessions: { [Key: string]: string } = {};
   private userRoomsMap: Map<string, Set<string>> = new Map();
   private roomMembersMap: Map<string, Set<string>> = new Map();
@@ -98,5 +98,9 @@ export class SimpleRepository implements IRepository {
     if ((this.roomMembersMap.get(roomId)?.size ?? 0) === 0) {
       this.roomMembersMap.delete(roomId);
     }
+  }
+
+  async getMessageHistory(_roomId: string) {
+    return [];
   }
 }

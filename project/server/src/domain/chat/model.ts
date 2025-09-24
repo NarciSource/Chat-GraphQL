@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, InputType, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Message {
@@ -10,6 +10,9 @@ export class Message {
 
   @Field({ nullable: true })
   content?: string;
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  createdAt?: Date;
 }
 
 @InputType()
@@ -21,6 +24,6 @@ export class SystemInput {
   roomId?: string;
 }
 
-export type MessagePayload = { message: Message };
+export type MessagePayload = { message: Message; participants: string[] };
 export type SystemPayload = { system: Message };
 export type TypingPayload = { typing: Message };

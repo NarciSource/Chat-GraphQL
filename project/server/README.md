@@ -7,7 +7,8 @@
 [![Apollo](https://img.shields.io/badge/Apollo-311C87?style=flat-square&logo=apollographql&logoColor=white)](https://www.apollographql.com/)
 [![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/ko)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  
-[![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io)  
+[![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io)
+[![DynamoDB](https://img.shields.io/badge/DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white)](https://aws.amazon.com/ko/dynamodb/)  
 [![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)](https://eslint.org/)
 [![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=flat-square&logo=prettier&logoColor=black)](https://prettier.io/)
 [![Voyager](https://img.shields.io/badge/🛰️_Voyager-548f9e?style=flat-square&logoColor=white)](https://github.com/APIs-guru/graphql-voyager)  
@@ -16,14 +17,14 @@
 
 ## 💡 주요 기능
 
-| 기능        | 설명                                                | 요청(Mutation)                                                                         | 구독(Subscription)                                     |
-| ----------- | --------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| 사용자 등록 | 유저ID &harr; 소켓ID 매핑                           | mutation setUser<br>(id: String!): Boolean!                                            | subscription userPresence: [String!]!                  |
-| 방 생성     | 방 객체 생성 &rarr;<br> 참가자 초대 이벤트 발생     | mutation createRoom<br>(hostId: String!, participants: [String!]!): String!            | subscription roomCreated<br>(userId: String!): Room!   |
-| 방 참가     | 방에 사용자 추가 &rarr;<br> 참가자 초대 이벤트 발생 | mutation joinRoom<br>(roomId: String!, userId: String!): Boolean!                      | subscription roomCreated<br>(userId: String!): Room!   |
-| 방 떠나기   | 방에서 사용자 제거 &rarr;<br> 떠남 알림             | mutation leaveRoom<br>(roomId: String!, userId: String!): Boolean!                     | subscription system<br>(input: SystemInput!): Message! |
-| 메시지 교환 | 방에서 메시지 중계                                  | mutation message<br>(content: String!, roomId: String!, userId: String!):<br> Boolean! | subscription message<br>(roomId: String!): Message!    |
-| 타이핑 알림 | 방에서 타이핑 이벤트 중계                           | mutation typing<br>(roomId: String!, userId: String!): Boolean!                        | subscription typing<br>(roomId: String!): Message!     |
+| 기능 | 설명 | 요청(Mutation) | 구독(Subscription) |
+| --- | --- | --- | --- |
+| 사용자 등록 | 유저ID &harr; 소켓ID 매핑 | mutation setUser<br>(id: String!): Boolean! | subscription userPresence: [String!]! |
+| 방 생성 | 방 객체 생성 &rarr;<br> 참가자 초대 이벤트 발생 | mutation createRoom<br>(hostId: String!, participants: [String!]!): String! | subscription roomCreated<br>(userId: String!): Room! |
+| 방 참가 | 방에 사용자 추가 &rarr;<br> 참가자 초대 이벤트 발생 | mutation joinRoom<br>(roomId: String!, userId: String!): Boolean! | subscription roomCreated<br>(userId: String!): Room! |
+| 방 떠나기 | 방에서 사용자 제거 &rarr;<br> 떠남 알림 | mutation leaveRoom<br>(roomId: String!, userId: String!): Boolean! | subscription system<br>(input: SystemInput!): Message! |
+| 메시지 교환 | 방에서 메시지 중계 | mutation message<br>(content: String!, roomId: String!, userId: String!):<br> Boolean! | subscription message<br>(roomId: String!): Message! |
+| 타이핑 알림 | 방에서 타이핑 이벤트 중계 | mutation typing<br>(roomId: String!, userId: String!): Boolean! | subscription typing<br>(roomId: String!): Message! |
 
 ## 🛰️ GraphQL Schema Diagram
 
@@ -31,8 +32,8 @@
 > 타입과 타입 간 참조를 그래프 형태로 표현
 
 | [![voyager](https://github.com/user-attachments/assets/91d13616-99d2-416c-aef8-9462a21ae382)](https://narcisource.github.io/Chat-Service--Backend/) |
-| --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [GraphQL Voyager 바로가기](https://narcisource.github.io/Chat-Service--Backend/)                                                                    |
+| --- |
+| [GraphQL Voyager 바로가기](https://narcisource.github.io/Chat-Service--Backend/) |
 
 ```mermaid
 classDiagram
@@ -55,7 +56,8 @@ classDiagram
   }
 
   class Query {
-    +getUsers() : [String!]!
+    +users() : [String!]!
+    +history(roomId: String!) : [Message!]!
   }
 
   class Mutation {
@@ -82,6 +84,7 @@ classDiagram
   Subscription --> Room : publishes
   Subscription --> SystemInput : uses
   Message --> Room : belongs to
+  Query --> Message : get
 ```
 
 ## 📂 폴더 구조
@@ -99,37 +102,93 @@ server
 ├─ src
 │  ├─ main.ts
 │  ├─ common
-│  │  ├─ graphql.module.ts
-│  │  ├─ pubsub.module.ts
-│  │  └─ redis.module.ts
+│  │  ├─ graphql
+│  │  │  ├─ index.ts
+│  │  │  └─ module.ts
+│  │  ├─ redis
+│  │  │  ├─ index.ts
+│  │  │  ├─ module.ts
+│  │  │  └─ providers
+│  │  │     ├─ index.ts
+│  │  │     ├─ storage.ts
+│  │  │     ├─ pubsub.ts
+│  │  │     └─ streams.ts
+│  │  └─ dynamo
+│  │     ├─ index.ts
+│  │     ├─ module.ts
+│  │     └─ provider.ts
 │  ├─ core
 │  │  ├─ controller.ts
 │  │  └─ module.ts
 │  ├─ domain
+│  │  ├─ shared
+│  │  │  └─ events
+│  │  │     ├─ index.ts
+│  │  │     ├─ PubSubPublish.event.ts
+│  │  │     ├─ PubSubPublish.handler.ts
+│  │  │     ├─ StreamsPublish.event.ts
+│  │  │     └─ StreamsPublish.handler.ts
 │  │  ├─ user
-│  │  │  ├─ model.ts
+│  │  │  ├─ index.ts
 │  │  │  ├─ module.ts
-│  │  │  ├─ resolver.ts
-│  │  │  └─ service.ts
+│  │  │  ├─ model.ts
+│  │  │  ├─ queries
+│  │  │  │  ├─ index.ts
+│  │  │  │  └─ GetUsers.query.ts
+│  │  │  │     └─ GetUsers.handler.ts
+│  │  │  ├─ commands
+│  │  │  │  ├─ index.ts
+│  │  │  │  ├─ DisconnectUser.command.ts
+│  │  │  │  │  └─ DisconnectUser.handler.ts
+│  │  │  │  └─ RegisterUser.command.ts
+│  │  │  │     └─ RegisterUser.handler.ts
+│  │  │  └─ resolvers
+│  │  │     ├─ index.ts
+│  │  │     ├─ query.ts
+│  │  │     ├─ mutation.ts
+│  │  │     └─ subscription.ts
 │  │  ├─ chat
+│  │  │  ├─ index.ts
 │  │  │  ├─ model.ts
 │  │  │  ├─ module.ts
-│  │  │  └─ resolver.ts
+│  │  │  ├─ queries
+│  │  │  │  ├─ index.ts
+│  │  │  │  ├─ GetMessageHistory.query.ts
+│  │  │  │  │  └─ GetMessageHistory.handler.ts
+│  │  │  │  └─ GetPartitions.query.ts
+│  │  │  │     └─ GetPartitions.handler.ts
+│  │  │  └─ resolvers
+│  │  │     ├─ index.ts
+│  │  │     ├─ query.ts
+│  │  │     ├─ mutation.ts
+│  │  │     └─ subscription.ts
 │  │  └─ room
+│  │     ├─ index.ts
 │  │     ├─ model.ts
 │  │     ├─ module.ts
-│  │     ├─ resolver.ts
-│  │     └─ service.ts
+│  │     ├─ commands
+│  │     │  ├─ index.ts
+│  │     │  ├─ CreateRoom.command.ts
+│  │     │  │  └─ CreateRoom.handler.ts
+│  │     │  ├─ JoinRoom.command.ts
+│  │     │  │  └─ JoinRoom.handler.ts
+│  │     │  └─ LeaveRoom.command.ts
+│  │     │     └─ LeaveRoom.handler.ts
+│  │     └─ resolvers
+│  │        ├─ index.ts
+│  │        ├─ mutation.ts
+│  │        └─ subscription.ts
 │  └─ repository
-│     ├─ interface.ts
+│     ├─ index.ts
 │     ├─ module.ts
-│     ├─ redis.ts
-│     └─ simple.ts
+│     └─ interface.ts
+│        ├─ InMemoryRepository.ts
+│        └─ DatabaseRepository.ts
 ├─ docker-compose.yml
 │  ├─ Dockerfile
 │  └─ .dockerignore
 ├─ nest-cli.json
-├─ codegen.introspection.yml
+├─ codegen.introspection.yml # graphQL 스키마 생성 정의
 ├─ package.json
 │  └─ package-lock.json
 ├─ tsconfig.json
@@ -147,7 +206,13 @@ $ docker run -d \
   --name redis-container \
   --env-file ./.env \
   -p ${REDIS_PORT}:6379 \
-  redis:latest
+  redis:8.2.1
+
+$ docker run -d \
+  --name dynamodb-container \
+  --env-file ./.env \
+  -p ${DYNAMO_PORT}:8000 \
+  amazon/dynamodb-local:3.1.0
 
 $ npm install
 $ npm run start
