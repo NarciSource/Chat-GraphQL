@@ -34,7 +34,7 @@ export function useSetUserMutation(options: VueApolloComposable.UseMutationOptio
 export type SetUserMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<Ops.SetUserMutation, Ops.SetUserMutationVariables>;
 export const GetUsersDocument = gql`
     query getUsers {
-  getUsers
+  users
 }
     `;
 

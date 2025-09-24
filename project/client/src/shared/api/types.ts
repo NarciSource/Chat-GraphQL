@@ -12,11 +12,14 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: { input: any; output: any; }
 };
 
 export type Message = {
   __typename?: 'Message';
   content?: Maybe<Scalars['String']['output']>;
+  createdAt?: Maybe<Scalars['DateTime']['output']>;
   roomId: Scalars['String']['output'];
   userId: Scalars['String']['output'];
 };
@@ -69,7 +72,13 @@ export type MutationTypingArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  getUsers: Array<Scalars['String']['output']>;
+  history: Array<Message>;
+  users: Array<Scalars['String']['output']>;
+};
+
+
+export type QueryHistoryArgs = {
+  roomId: Scalars['String']['input'];
 };
 
 export type Room = {
@@ -89,7 +98,7 @@ export type Subscription = {
 
 
 export type SubscriptionMessageArgs = {
-  roomId: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 

@@ -62,6 +62,38 @@ export function useSendTypingMutation(options: VueApolloComposable.UseMutationOp
   return VueApolloComposable.useMutation<Ops.SendTypingMutation, Ops.SendTypingMutationVariables>(SendTypingDocument, options);
 }
 export type SendTypingMutationCompositionFunctionResult = VueApolloComposable.UseMutationReturn<Ops.SendTypingMutation, Ops.SendTypingMutationVariables>;
+export const GetHistoryDocument = gql`
+    query getHistory($roomId: String!) {
+  history(roomId: $roomId) {
+    userId
+    content
+    createdAt
+  }
+}
+    `;
+
+/**
+ * __useGetHistoryQuery__
+ *
+ * To run a query within a Vue component, call `useGetHistoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetHistoryQuery` returns an object from Apollo Client that contains result, loading and error properties
+ * you can use to render your UI.
+ *
+ * @param variables that will be passed into the query
+ * @param options that will be passed into the query, supported options are listed on: https://v4.apollo.vuejs.org/guide-composable/query.html#options;
+ *
+ * @example
+ * const { result, loading, error } = useGetHistoryQuery({
+ *   roomId: // value for 'roomId'
+ * });
+ */
+export function useGetHistoryQuery(variables: Ops.GetHistoryQueryVariables | VueCompositionApi.Ref<Ops.GetHistoryQueryVariables> | ReactiveFunction<Ops.GetHistoryQueryVariables>, options: VueApolloComposable.UseQueryOptions<Ops.GetHistoryQuery, Ops.GetHistoryQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<Ops.GetHistoryQuery, Ops.GetHistoryQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<Ops.GetHistoryQuery, Ops.GetHistoryQueryVariables>> = {}) {
+  return VueApolloComposable.useQuery<Ops.GetHistoryQuery, Ops.GetHistoryQueryVariables>(GetHistoryDocument, variables, options);
+}
+export function useGetHistoryLazyQuery(variables?: Ops.GetHistoryQueryVariables | VueCompositionApi.Ref<Ops.GetHistoryQueryVariables> | ReactiveFunction<Ops.GetHistoryQueryVariables>, options: VueApolloComposable.UseQueryOptions<Ops.GetHistoryQuery, Ops.GetHistoryQueryVariables> | VueCompositionApi.Ref<VueApolloComposable.UseQueryOptions<Ops.GetHistoryQuery, Ops.GetHistoryQueryVariables>> | ReactiveFunction<VueApolloComposable.UseQueryOptions<Ops.GetHistoryQuery, Ops.GetHistoryQueryVariables>> = {}) {
+  return VueApolloComposable.useLazyQuery<Ops.GetHistoryQuery, Ops.GetHistoryQueryVariables>(GetHistoryDocument, variables, options);
+}
+export type GetHistoryQueryCompositionFunctionResult = VueApolloComposable.UseQueryReturn<Ops.GetHistoryQuery, Ops.GetHistoryQueryVariables>;
 export const OnTypingDocument = gql`
     subscription onTyping($roomId: String!) {
   typing(roomId: $roomId) {
@@ -91,8 +123,9 @@ export function useOnTypingSubscription(variables: Ops.OnTypingSubscriptionVaria
 }
 export type OnTypingSubscriptionCompositionFunctionResult = VueApolloComposable.UseSubscriptionReturn<Ops.OnTypingSubscription, Ops.OnTypingSubscriptionVariables>;
 export const ReceiveMessageDocument = gql`
-    subscription receiveMessage($roomId: String!) {
-  message(roomId: $roomId) {
+    subscription receiveMessage($userId: String!) {
+  message(userId: $userId) {
+    roomId
     userId
     content
   }
@@ -111,7 +144,7 @@ export const ReceiveMessageDocument = gql`
  *
  * @example
  * const { result, loading, error } = useReceiveMessageSubscription({
- *   roomId: // value for 'roomId'
+ *   userId: // value for 'userId'
  * });
  */
 export function useReceiveMessageSubscription(variables: Ops.ReceiveMessageSubscriptionVariables | VueCompositionApi.Ref<Ops.ReceiveMessageSubscriptionVariables> | ReactiveFunction<Ops.ReceiveMessageSubscriptionVariables>, options: VueApolloComposable.UseSubscriptionOptions<Ops.ReceiveMessageSubscription, Ops.ReceiveMessageSubscriptionVariables> | VueCompositionApi.Ref<VueApolloComposable.UseSubscriptionOptions<Ops.ReceiveMessageSubscription, Ops.ReceiveMessageSubscriptionVariables>> | ReactiveFunction<VueApolloComposable.UseSubscriptionOptions<Ops.ReceiveMessageSubscription, Ops.ReceiveMessageSubscriptionVariables>> = {}) {
