@@ -10,6 +10,7 @@
   - [🏗️ Architecture Diagram](#️-architecture-diagram)
   - [📡 Communication Diagram](#-communication-diagram)
   - [🛰️ GraphQL Schema Diagram](#️-graphql-schema-diagram)
+- [📂 폴더 구조](#-폴더-구조)
 - [🗂️ 서브 프로젝트](#%EF%B8%8F-서브-프로젝트)
 - [🚀 실행 방법](#-실행-방법)
 
@@ -18,9 +19,11 @@
 [![GraphQL](https://img.shields.io/badge/GraphQL-E10098?style=flat-square&logo=graphql&logoColor=white)](https://graphql.org/)
 [![Apollo](https://img.shields.io/badge/Apollo-311C87?style=flat-square&logo=apollographql&logoColor=white)](https://www.apollographql.com/)  
 [![NestJS](https://img.shields.io/badge/NestJS-E0234E?style=flat-square&logo=nestjs&logoColor=white)](https://nestjs.com/)
-[![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io)
+[![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com/ko/)
 [![NodeJS](https://img.shields.io/badge/Node.js-6DA55F?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/ko)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)  
+[![Redis](https://img.shields.io/badge/Redis-FF4438?style=flat-square&logo=redis&logoColor=white)](https://redis.io)
+[![DynamoDB](https://img.shields.io/badge/DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white)](https://aws.amazon.com/ko/dynamodb/)  
 [![Vuejs](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)](https://ko.vite.dev)
 [![Pinia](https://img.shields.io/badge/🍍_Pinia-FFD859?style=flat-square&logoColor=white)](https://pinia.vuejs.org/)
@@ -39,10 +42,15 @@
 
 ## 💁 소개
 
-**GraphQL**와 **Redis**를 활용한 실시간 다대다 채팅 서비스입니다.  
+**GraphQL**를 활용한 실시간 다대다 채팅 서비스입니다.
+
 사용자는 채팅 방을 생성하고, 다른 사용자와 동시에 메시지를 주고받으며,  
 타이핑 상태 알림으로 대화 몰입도를 높일 수 있습니다.  
-모든 메시지와 이벤트는 Redis에 저장 후 즉시 소비되어, 초저지연 실시간 통신을 제공합니다.
+모든 메시지와 이벤트는 **Redis**에 저장 후 즉시 소비되어, 초저지연 실시간 통신을 제공합니다.
+
+또한, 처리된 메시지와 이벤트는 **DynamoDB**에 영구 저장되어  
+필요 시 애플리케이션에서 이전 대화 내역이나 상태를 조회할 수 있습니다.  
+이를 통해 실시간성과 데이터 영속성을 모두 만족합니다.
 
 ## 🎥 데모
 
@@ -64,7 +72,7 @@ https://github.com/user-attachments/assets/33a33082-bac5-4f8f-bbcf-1c338ebad78e
 
 ### 🏗️ Architecture Diagram
 
-![architecture](https://github.com/user-attachments/assets/9b13fa73-3a4e-4d67-b994-f26c800a55fe)
+![architecture](https://github.com/user-attachments/assets/6a9944e9-de97-4978-9781-56675c67f39b)
 
 - 백엔드
   - **Apollo Server**: Express 플러그인으로 GraphQL Query / Mutation / Subscription / Resolver 처리
@@ -72,8 +80,10 @@ https://github.com/user-attachments/assets/33a33082-bac5-4f8f-bbcf-1c338ebad78e
   - **NestJS 서버**: 이벤트 처리, 비즈니스 로직 실행
   - **Business**: 클라이언트 요청 처리, 레플리카 간 **Redis Adapter**를 통해 세션 동기화
   - **Redis**
-    - **Pub/Sub**: 서버 레플리카 간 Socket.IO 이벤트 동기화
+    - **Pub/Sub**: 서버 레플리카 간 메시지 동기화
+    - **Streams**: 레디스 스트림에 메시지 저장 후 소비
     - **Storage**: 캐싱 및 데이터 저장소 역할
+  - **DynamoDB**: Redis Streams에서 전달된 이벤트 데이터를 영구 저장
 - 프론트엔드
   - **Apollo Client**: GraphQL Query/Mutation/Subscription 처리, 클라이언트 캐싱, 데이터 페칭
   - **NGINX**: 프론트엔드 애플리케이션 정적 파일 서빙
@@ -86,8 +96,9 @@ https://github.com/user-attachments/assets/33a33082-bac5-4f8f-bbcf-1c338ebad78e
      - Query / Mutation: 비즈니스 로직 실행 후 응답 반환
      - Subscription: Redis Pub/Sub를 통해 실시간 이벤트 브로드캐스트
      - Redis Storage에서 데이터 조회/저장
-  4. 클라이언트는 Subscription을 구독하고, 서버에서 발행된 메시지를 실시간 수신
-  5. 화면에 실시간 업데이트 (채팅 메시지, 타이핑 상태, 방 생성)
+  4. Consumer가 이벤트를 읽어 DynamoDB에 데이터 저장
+  5. 클라이언트는 Subscription을 구독하고, 서버에서 발행된 메시지를 실시간 수신
+  6. 화면에 실시간 업데이트 (채팅 메시지, 타이핑 상태, 방 생성)
 
 ### 📡 Communication Diagram
 
@@ -104,6 +115,7 @@ classDiagram
         +subscribeMessage() // 채팅 메시지 구독
         +subscribeTyping() // 타이핑 상태 구독
         +subscribeUserPresence() // 사용자 상태 구독
+        +queryGetHistory() // 메시지 기록 요청
         +mutationCreateRoom() // 방 생성 요청
         +mutationJoinRoom() // 방 참가 요청
         +mutationLeaveRoom() // 방 퇴장 요청
@@ -113,6 +125,7 @@ classDiagram
 
     class ApolloServer {
         +schema // Query, Mutation, Subscription 정의
+        +Query.getChatHistory() : [Message!]!
         +Mutation.createRoom() : String!
         +Mutation.joinRoom() : Boolean!
         +Mutation.leaveRoom() : Boolean!
@@ -159,7 +172,8 @@ classDiagram
   }
 
   class Query {
-    +getUsers() : [String!]!
+    +users() : [String!]!
+    +history(roomId: String!) : [Message!]!
   }
 
   class Mutation {
@@ -186,14 +200,46 @@ classDiagram
   Subscription --> Room : publishes
   Subscription --> SystemInput : uses
   Message --> Room : belongs to
+  Query --> Message : get
 ```
+
+## 📂 폴더 구조
+
+<details>
+<summary>열기</summary>
+
+```
+Chat-Service
+├─ infra
+│  └─ docker-compose.yml
+├─ project
+│  ├─ client
+│  │  ├─ Dockerfile
+│  │  ├─ nginx.conf
+│  │  └─ codegen.yml
+│  ├─ server
+│  │  ├─ Dockerfile
+│  │  └─ graphql
+│  │     └─ schema.gql
+│  └─ consumers
+│     ├─ stream-dynamo-consumer
+│     │  └─ Dockerfile
+│     └─ docker-compose.yml
+├─ .env
+├─ .prettierrc
+├─ docker-compose.yml
+└─ README.md
+```
+
+</details>
 
 ## 🗂️ 서브 프로젝트
 
-| 프로젝트 | 저장소                                                             | 설명                                  | 브랜치/버전      |
-| -------- | ------------------------------------------------------------------ | ------------------------------------- | ---------------- |
-| Backend  | https://github.com/NarciSource/Chat-Service--Backend/tree/graphql  | GraphQL + Redis 기반 실시간 채팅 서버 | graphql / v2.1.0 |
-| Frontend | https://github.com/NarciSource/Chat-Service--Frontend/tree/graphql | Vue + Vite 클라이언트                 | graphql / v2.0.0 |
+| 프로젝트               | 저장소                                                                            | 설명                                  | 브랜치/버전       |
+| ---------------------- | --------------------------------------------------------------------------------- | ------------------------------------- | ----------------- |
+| Backend                | https://github.com/NarciSource/Chat-Service--Backend/tree/graphql                 | GraphQL + Redis 기반 실시간 채팅 서버 | graphql / v2.2.0  |
+| Frontend               | https://github.com/NarciSource/Chat-Service--Frontend/tree/graphql                | Vue + Vite 클라이언트                 | graphql / v2.1.0  |
+| stream-dynamo-consumer | https://github.com/NarciSource/Chat-GraphQL/tree/consumers/stream-dynamo-consumer | Redis-Streams에서 DynamoDB로 동기화   | consumer / v1.1.0 |
 
 ## 🚀 실행 방법
 
