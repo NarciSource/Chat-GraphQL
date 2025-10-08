@@ -1,12 +1,12 @@
 import Redis from 'ioredis';
 import * as dynamoose from 'dynamoose';
-import { Global, Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Client as ESClient } from '@elastic/elasticsearch';
 
 import InMemoryRepository from './InMemoryRepository';
 import DatabaseRepository from './DatabaseRepository';
 
-@Global()
 @Module({
   providers: [
     {
@@ -15,18 +15,22 @@ import DatabaseRepository from './DatabaseRepository';
         configService: ConfigService,
         redisClient: Redis,
         dynamoClient: typeof dynamoose,
+        esClient: ESClient,
       ) => {
+        const logger = new Logger('Repository');
         // 구현체를 선택하는 팩토리 함수
         const repositoryType = configService.get<string>('REPOSITORY_TYPE', 'InMemory');
+
+        logger.log(`선택된 레포지토리 형태: ${repositoryType}`);
 
         switch (repositoryType) {
           case 'InMemory':
             return new InMemoryRepository();
           case 'Database':
-            return new DatabaseRepository(configService, redisClient, dynamoClient);
+            return new DatabaseRepository(configService, redisClient, dynamoClient, esClient);
         }
       },
-      inject: [ConfigService, 'REDIS_STORAGE', 'DYNAMO_STORAGE'],
+      inject: [ConfigService, 'REDIS_STORAGE', 'DYNAMO_STORAGE', 'ES_STORAGE'],
     },
   ],
 

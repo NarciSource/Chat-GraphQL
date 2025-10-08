@@ -103,4 +103,8 @@ export default class InMemoryRepository implements IRepository {
   async getMessageHistory(_roomId: string) {
     return [];
   }
+
+  async searchByKeyword(userId: string, keyword: string) {
+    return [];
+  }
 }

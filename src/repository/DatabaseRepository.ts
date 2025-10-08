@@ -2,6 +2,7 @@ import Redis from 'ioredis';
 import dynamoose from 'dynamoose';
 import { Item } from 'dynamoose/dist/Item';
 import { Model } from 'dynamoose/dist/Model';
+import { Client as ESClient } from '@elastic/elasticsearch';
 import { DynamoDBServiceException } from '@aws-sdk/client-dynamodb';
 import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable } from '@nestjs/common';
@@ -12,6 +13,7 @@ import IRepository from './interface';
 @Injectable()
 export default class DatabaseRepository implements IRepository {
   private dynamoModel: Model<Message & Item>;
+  private indexName: string;
 
   constructor(
     configService: ConfigService,
@@ -20,16 +22,16 @@ export default class DatabaseRepository implements IRepository {
     private readonly redis: Redis,
     @Inject('DYNAMO_STORAGE')
     private readonly dynamo: typeof dynamoose,
+    @Inject('ES_CLIENT')
+    private readonly es: ESClient,
   ) {
     const table = configService.get<string>('DYNAMO_TABLE', 'ChatMessages');
 
     const schema = new dynamo.Schema(dynamoSchemaDefinition);
 
-    this.dynamoModel = this.dynamo.model(table, schema, {
-      create: false,
-      update: false,
-      waitForActive: false,
-    });
+    this.dynamoModel = this.dynamo.model(table, schema);
+
+    this.indexName = configService.get<string>('ES_INDEX', 'chat-messages');
   }
 
   // Key Helpers
@@ -157,9 +159,9 @@ export default class DatabaseRepository implements IRepository {
         .using('roomId-createdAt-index')
         .exec();
 
-      return response.map(({ userId, content, createdAt }) => ({
-        userId,
-        content,
+      return response.map(({ createdAt, ...rest }) => ({
+        roomId,
+        ...rest,
         createdAt: new Date(createdAt),
       }));
     } catch (error: unknown) {
@@ -170,6 +172,22 @@ export default class DatabaseRepository implements IRepository {
       }
       throw error;
     }
+  }
+
+  async searchByKeyword(userId: string, keyword: string) {
+    const result = await this.es.search<Message>({
+      index: this.indexName,
+      query: {
+        bool: {
+          must: [{ term: { userId } }, { match: { content: keyword } }],
+        },
+      },
+    });
+
+    return result.hits.hits.map(({ _source: { createdAt, ...rest } }) => ({
+      ...rest,
+      createdAt: new Date(createdAt),
+    }));
   }
 
   // Redis SCAN helper
