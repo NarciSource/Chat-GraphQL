@@ -21,6 +21,7 @@ import { HealthCheckController } from './controller';
     ESModule,
 
     ...Object.values(events),
+
     UserModule,
     ChatModule,
     RoomModule,

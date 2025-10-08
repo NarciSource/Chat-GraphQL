@@ -7,7 +7,9 @@ import { DynamoDBServiceException } from '@aws-sdk/client-dynamodb';
 import { ConfigService } from '@nestjs/config';
 import { Inject, Injectable } from '@nestjs/common';
 
-import { dynamoSchemaDefinition, Message } from 'src/model/schemaDefinition';
+import { REDIS_STORAGE, DYNAMO_STORAGE, ES_STORAGE } from 'src/common/symbols';
+import Message from 'src/model/Message';
+import { dynamoSchemaDefinition } from 'src/model/schemaDefinition';
 import IRepository from './interface';
 
 @Injectable()
@@ -18,11 +20,11 @@ export default class DatabaseRepository implements IRepository {
   constructor(
     configService: ConfigService,
 
-    @Inject('REDIS_STORAGE')
+    @Inject(REDIS_STORAGE)
     private readonly redis: Redis,
-    @Inject('DYNAMO_STORAGE')
+    @Inject(DYNAMO_STORAGE)
     private readonly dynamo: typeof dynamoose,
-    @Inject('ES_CLIENT')
+    @Inject(ES_STORAGE)
     private readonly es: ESClient,
   ) {
     const table = configService.get<string>('DYNAMO_TABLE', 'ChatMessages');

@@ -1,4 +1,4 @@
-import { Message } from 'src/model/schemaDefinition';
+import Message from 'src/model/Message';
 
 export default interface IRepository {
   setUser(userId: string, sessionId: string): Promise<void>; // 유저-세션 등록

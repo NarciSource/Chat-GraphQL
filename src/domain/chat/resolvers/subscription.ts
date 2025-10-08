@@ -1,16 +1,17 @@
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Inject } from '@nestjs/common';
 import { Args, Resolver, Subscription } from '@nestjs/graphql';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 
+import { REDIS_PUBSUB, REDIS_STREAMS } from 'src/common/symbols';
 import { RedisStreams } from 'src/common/redis';
 import { Message, MessagePayload, SystemInput, SystemPayload, TypingPayload } from '../model';
 
 @Resolver()
 export default class ChatSubscriptionResolver {
   constructor(
-    @Inject('REDIS_PUBSUB')
+    @Inject(REDIS_PUBSUB)
     private pubSub: RedisPubSub,
-    @Inject('REDIS_STREAMS')
+    @Inject(REDIS_STREAMS)
     private streams: RedisStreams,
   ) {}
 

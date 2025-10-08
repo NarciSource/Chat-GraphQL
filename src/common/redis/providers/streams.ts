@@ -4,8 +4,10 @@ import { ConfigService } from '@nestjs/config';
 
 type XReadArgs = Parameters<Redis['xread']>;
 
+export const REDIS_STREAMS = Symbol('REDIS_STREAMS');
+
 export default {
-  provide: 'REDIS_STREAMS',
+  provide: REDIS_STREAMS,
   useFactory: (configService: ConfigService) => {
     const logger = new Logger('RedisStreams');
     const host = configService.get<string>('REDIS_HOST', 'localhost');
