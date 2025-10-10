@@ -176,12 +176,13 @@ export default class DatabaseRepository implements IRepository {
     }
   }
 
-  async searchByKeyword(userId: string, keyword: string) {
+  async searchByKeyword(roomIds: string[], keyword: string) {
     const result = await this.es.search<Message>({
       index: this.indexName,
       query: {
         bool: {
-          must: [{ term: { userId } }, { match: { content: keyword } }],
+          filter: [{ terms: { roomId: roomIds } }],
+          must: [{ match: { content: keyword } }],
         },
       },
     });
