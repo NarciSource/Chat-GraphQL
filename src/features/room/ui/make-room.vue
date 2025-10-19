@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { watch } from "vue";
-import { useRouter } from "vue-router";
+import { HistoryState, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import UserListPopup from "@/features/user-presence/index.vue";
@@ -47,6 +47,9 @@ watch(room_result, (result) => {
 
   rooms.value.set(roomId, room); // 방 정보 업데이트
 
-  router.push(`/room/${room.id}`); // 방 이동
+  router.push({
+    path: `/room/${room.id}`,
+    state: { room } as unknown as HistoryState,
+  }); // 방 이동 및 방 상태 전달
 });
 </script>
