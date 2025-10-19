@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { watch } from "vue";
+import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import UserListPopup from "@/features/user-presence/index.vue";
@@ -17,7 +18,8 @@ import { Room, User } from "@/entities/chat/model";
 import useRoomStore from "../store/useRoomStore";
 import { useCreateRoomMutation, useRoomCreatedSubscription } from "../api/hooks";
 
-const { current_user, rooms, selected_room } = storeToRefs(useRoomStore());
+const router = useRouter();
+const { current_user, rooms } = storeToRefs(useRoomStore());
 const { mutate: make_room } = useCreateRoomMutation();
 
 // 다대다 채팅으로 방 생성하고 초대
@@ -44,6 +46,7 @@ watch(room_result, (result) => {
   );
 
   rooms.value.set(roomId, room); // 방 정보 업데이트
-  selected_room.value = room; // 선택 방 업데이트
+
+  router.push(`/room/${room.id}`); // 방 이동
 });
 </script>
