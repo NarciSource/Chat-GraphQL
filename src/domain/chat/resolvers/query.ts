@@ -2,7 +2,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 
 import { Message } from '../model';
-import { GetMessageHistoryQuery } from '../queries';
+import { GetMessageHistoryQuery, SearchMessagesByUserQuery } from '../queries';
 
 @Resolver()
 export default class ChatQueryResolver {
@@ -13,5 +13,12 @@ export default class ChatQueryResolver {
     const history = await this.queryBus.execute(new GetMessageHistoryQuery(roomId));
 
     return history;
+  }
+
+  @Query(() => [Message], { name: 'search' })
+  async searchKeyword(@Args('userId') userId: string, @Args('keyword') keyword: string) {
+    const found = this.queryBus.execute(new SearchMessagesByUserQuery(userId, keyword));
+
+    return found;
   }
 }

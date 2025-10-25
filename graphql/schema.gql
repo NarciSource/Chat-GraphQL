@@ -25,6 +25,7 @@ type Mutation {
 
 type Query {
   history(roomId: String!): [Message!]!
+  search(keyword: String!, userId: String!): [Message!]!
   users: [String!]!
 }
 
