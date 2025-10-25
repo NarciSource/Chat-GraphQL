@@ -25,6 +25,15 @@ generates:
     plugins:
       - typescript-operations
 
+  src/features/explorer/api/operations.ts:
+    documents: src/features/explorer/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: "@/shared/api/types"
+      importTypesNamespace: SchemaTypes
+    plugins:
+      - typescript-operations
+
   src/features/user-auth/api/operations.ts:
     documents: src/features/user-auth/api/**/*.gql
     preset: import-types
@@ -58,6 +67,18 @@ generates:
 
   src/features/room/api/hooks.ts:
     documents: src/features/room/api/**/*.gql
+    preset: import-types
+    presetConfig:
+      typesPath: ./operations
+      importTypesNamespace: Ops
+    plugins:
+      - typescript-vue-apollo
+    config:
+      withCompositionFunctions: true
+      vueCompositionApiImportFrom: "vue"
+
+  src/features/explorer/api/hooks.ts:
+    documents: src/features/explorer/api/**/*.gql
     preset: import-types
     presetConfig:
       typesPath: ./operations
