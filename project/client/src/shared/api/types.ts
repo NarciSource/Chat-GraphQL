@@ -73,12 +73,19 @@ export type MutationTypingArgs = {
 export type Query = {
   __typename?: 'Query';
   history: Array<Message>;
+  search: Array<Message>;
   users: Array<Scalars['String']['output']>;
 };
 
 
 export type QueryHistoryArgs = {
   roomId: Scalars['String']['input'];
+};
+
+
+export type QuerySearchArgs = {
+  keyword: Scalars['String']['input'];
+  userId: Scalars['String']['input'];
 };
 
 export type Room = {

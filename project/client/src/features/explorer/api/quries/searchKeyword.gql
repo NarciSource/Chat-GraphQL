@@ -1,0 +1,8 @@
+query searchKeyword($userId: String!, $keyword: String!) {
+  search(userId: $userId, keyword: $keyword) {
+    roomId
+    userId
+    content
+    createdAt
+  }
+}
