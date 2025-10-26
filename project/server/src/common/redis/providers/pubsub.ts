@@ -3,8 +3,10 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+export const REDIS_PUBSUB = Symbol('REDIS_PUBSUB');
+
 export default {
-  provide: 'REDIS_PUBSUB',
+  provide: REDIS_PUBSUB,
   useFactory: async (configService: ConfigService) => {
     const logger = new Logger('RedisPubSub');
     const host = configService.get<string>('REDIS_HOST', 'localhost');

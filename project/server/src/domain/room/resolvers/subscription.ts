@@ -1,12 +1,13 @@
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Inject } from '@nestjs/common';
 import { Args, Resolver, Subscription } from '@nestjs/graphql';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 
+import { REDIS_PUBSUB } from 'src/common/symbols';
 import Room, { RoomPayload } from '../model';
 
 @Resolver()
 export default class RoomSubscriptionResolver {
-  constructor(@Inject('REDIS_PUBSUB') private pubSub: RedisPubSub) {}
+  constructor(@Inject(REDIS_PUBSUB) private pubSub: RedisPubSub) {}
 
   @Subscription(() => Room, {
     name: 'roomCreated',

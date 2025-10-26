@@ -1,6 +1,7 @@
 import { Global, Inject } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
 
+import { REDIS_STREAMS } from 'src/common/symbols';
 import { RedisStreams } from 'src/common/redis';
 import StreamsPublishEvent from './StreamsPublish.event';
 
@@ -8,7 +9,7 @@ import StreamsPublishEvent from './StreamsPublish.event';
 @EventsHandler(StreamsPublishEvent)
 export default class StreamsPublishHandler<T> implements IEventHandler<StreamsPublishEvent<T>> {
   constructor(
-    @Inject('REDIS_STREAMS')
+    @Inject(REDIS_STREAMS)
     private streams: RedisStreams,
   ) {}
   async handle({ trigger, payload }: StreamsPublishEvent<T>) {

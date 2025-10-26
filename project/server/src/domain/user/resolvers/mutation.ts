@@ -1,8 +1,9 @@
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Inject } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 
+import { REDIS_PUBSUB } from 'src/common/symbols';
 import { UserPresencePayload } from '../model';
 import { GetUsersQuery } from '../queries';
 import { DisconnectUserCommand, RegisterUserCommand } from '../commands';
@@ -13,7 +14,7 @@ export default class UserMutationResolver {
     private readonly queryBus: QueryBus,
     private readonly commandBus: CommandBus,
 
-    @Inject('REDIS_PUBSUB') private pubSub: RedisPubSub,
+    @Inject(REDIS_PUBSUB) private pubSub: RedisPubSub,
   ) {
     void this.listenToDisconnect();
   }

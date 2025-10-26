@@ -1,6 +1,6 @@
+import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express';
-import { express as voyagerMiddleware } from 'graphql-voyager/middleware';
 
 import { CoreModule } from './core/module';
 

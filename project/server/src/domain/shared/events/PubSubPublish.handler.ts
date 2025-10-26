@@ -1,14 +1,15 @@
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { Global, Inject } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 
+import { REDIS_PUBSUB } from 'src/common/symbols';
 import PubSubPublishEvent from './PubSubPublish.event';
 
 @Global()
 @EventsHandler(PubSubPublishEvent)
 export default class PubSubPublishHandler<T> implements IEventHandler<PubSubPublishEvent<T>> {
   constructor(
-    @Inject('REDIS_PUBSUB')
+    @Inject(REDIS_PUBSUB)
     private readonly pubSub: RedisPubSub,
   ) {}
   async handle({ trigger, payload }: PubSubPublishEvent<T>) {

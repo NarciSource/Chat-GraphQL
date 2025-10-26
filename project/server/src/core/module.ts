@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from 'src/common/graphql';
 import { RedisModule } from 'src/common/redis';
 import { DynamoModule } from 'src/common/dynamo';
+import { ESModule } from 'src/common/es';
 import * as events from 'src/domain/shared/events';
 import { UserModule } from 'src/domain/user';
 import { RoomModule } from 'src/domain/room';
@@ -17,8 +18,10 @@ import { HealthCheckController } from './controller';
     GraphQLModule,
     RedisModule,
     DynamoModule,
+    ESModule,
 
     ...Object.values(events),
+
     UserModule,
     ChatModule,
     RoomModule,
