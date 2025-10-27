@@ -10,6 +10,7 @@
   - [🏗️ Architecture Diagram](#️-architecture-diagram)
   - [📡 Communication Diagram](#-communication-diagram)
   - [🛰️ GraphQL Schema Diagram](#️-graphql-schema-diagram)
+  - [📐 Sequence Diagram](#-sequence-diagram)
 - [📂 폴더 구조](#-폴더-구조)
 - [🗂️ 서브 프로젝트](#%EF%B8%8F-서브-프로젝트)
 - [🚀 실행 방법](#-실행-방법)
@@ -26,7 +27,7 @@
 [![DynamoDB](https://img.shields.io/badge/DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white)](https://aws.amazon.com/ko/dynamodb/)  
 [![Vuejs](https://img.shields.io/badge/Vue.js-4FC08D?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)](https://ko.vite.dev)
-[![Pinia](https://img.shields.io/badge/🍍_Pinia-FFD859?style=flat-square&logoColor=white)](https://pinia.vuejs.org/)
+[![Pinia](https://img.shields.io/badge/Pinia-FFD859?style=flat-square&logo=pinia&logoColor=black)](https://pinia.vuejs.org/)
 [![Quasar](https://img.shields.io/badge/Quasar-050A14?style=flat-square&logo=quasar&logoColor=white)](https://quasar.dev/)  
 [![Steiger](https://img.shields.io/badge/FSD_Steiger-211b1d.svg?logo=data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiPgo8cGF0aCBkPSJNMCAwIEMyOC4zOCAwIDU2Ljc2IDAgODYgMCBDODYgMy42MyA4NiA3LjI2IDg2IDExIEM1Ny42MiAxMSAyOS4yNCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0VCRUFFQSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsMTAyKSIvPgo8cGF0aCBkPSJNMCAwIEMyOC4zOCAwIDU2Ljc2IDAgODYgMCBDODYgMy42MyA4NiA3LjI2IDg2IDExIEM1Ny42MiAxMSAyOS4yNCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0VCRUFFQSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsODcpIi8+CjxwYXRoIGQ9Ik0wIDAgQzI4LjM4IDAgNTYuNzYgMCA4NiAwIEM4NiAzLjYzIDg2IDcuMjYgODYgMTEgQzU3LjYyIDExIDI5LjI0IDExIDAgMTEgQzAgNy4zNyAwIDMuNzQgMCAwIFogIiBmaWxsPSIjRUJFQUVBIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1Nyw1NykiLz4KPHBhdGggZD0iTTAgMCBDMjguMzggMCA1Ni43NiAwIDg2IDAgQzg2IDMuNjMgODYgNy4yNiA4NiAxMSBDNTcuNjIgMTEgMjkuMjQgMTEgMCAxMSBDMCA3LjM3IDAgMy43NCAwIDAgWiAiIGZpbGw9IiNFQkVBRUEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDU3LDQyKSIvPgo8cGF0aCBkPSJNMCAwIEMxMy41MyAwIDI3LjA2IDAgNDEgMCBDNDEgMy42MyA0MSA3LjI2IDQxIDExIEMyNy40NyAxMSAxMy45NCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0U5RThFOCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsMTQ3KSIvPgo8cGF0aCBkPSJNMCAwIEMxMy41MyAwIDI3LjA2IDAgNDEgMCBDNDEgMy42MyA0MSA3LjI2IDQxIDExIEMyNy40NyAxMSAxMy45NCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0U5RThFOCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsMTMyKSIvPgo8cGF0aCBkPSJNMCAwIEMxMy41MyAwIDI3LjA2IDAgNDEgMCBDNDEgMy42MyA0MSA3LjI2IDQxIDExIEMyNy40NyAxMSAxMy45NCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0U5RThFOCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsMTE3KSIvPgo8cGF0aCBkPSJNMCAwIEMxMy41MyAwIDI3LjA2IDAgNDEgMCBDNDEgMy42MyA0MSA3LjI2IDQxIDExIEMyNy40NyAxMSAxMy45NCAxMSAwIDExIEMwIDcuMzcgMCAzLjc0IDAgMCBaICIgZmlsbD0iI0U5RThFOCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTcsNzIpIi8+Cjwvc3ZnPgo=&style=flat-square&logoColor=black)](https://github.com/feature-sliced/steiger)
 [![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=flat-square&logo=eslint&logoColor=white)](https://eslint.org/)
@@ -54,7 +55,10 @@
 
 ## 🎥 데모
 
-https://github.com/user-attachments/assets/33a33082-bac5-4f8f-bbcf-1c338ebad78e
+https://github.com/user-attachments/assets/e17c4dd8-269c-4dc3-bc6f-e3864a0b534c
+
+| ![screen-01](https://github.com/user-attachments/assets/5605115a-4200-4932-b014-ecf405640bda) | ![screen-02](https://github.com/user-attachments/assets/948bae2a-28b1-43b0-aaa6-c3d49bcc636c) |
+| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 
 ## 💡 주요 기능
 
@@ -72,18 +76,20 @@ https://github.com/user-attachments/assets/33a33082-bac5-4f8f-bbcf-1c338ebad78e
 
 ### 🏗️ Architecture Diagram
 
-![architecture](https://github.com/user-attachments/assets/6a9944e9-de97-4978-9781-56675c67f39b)
+![architecture](https://github.com/user-attachments/assets/a9d7a533-c4b3-45f5-a875-d404ff4ded23)
 
 - 백엔드
   - **Apollo Server**: Express 플러그인으로 GraphQL Query / Mutation / Subscription / Resolver 처리
   - **Kong API Gateway**: 클라이언트 요청 라우팅 및 로드밸런싱, WebSocket 업그레이드 지원
   - **NestJS 서버**: 이벤트 처리, 비즈니스 로직 실행
   - **Business**: 클라이언트 요청 처리, 레플리카 간 **Redis Adapter**를 통해 세션 동기화
+  - **Consumers**: Redis Streams를 구독하여 이벤트를 처리하고, DynamoDB와 Elasticsearch로 데이터 동기화
   - **Redis**
     - **Pub/Sub**: 서버 레플리카 간 메시지 동기화
     - **Streams**: 레디스 스트림에 메시지 저장 후 소비
     - **Storage**: 캐싱 및 데이터 저장소 역할
   - **DynamoDB**: Redis Streams에서 전달된 이벤트 데이터를 영구 저장
+  - **Elasticsearch**: Redis Streams에서 전달된 이벤트 데이터를 색인하여, 검색어 기반 대화 내역 조회 지원
 - 프론트엔드
   - **Apollo Client**: GraphQL Query/Mutation/Subscription 처리, 클라이언트 캐싱, 데이터 페칭
   - **NGINX**: 프론트엔드 애플리케이션 정적 파일 서빙
@@ -97,8 +103,9 @@ https://github.com/user-attachments/assets/33a33082-bac5-4f8f-bbcf-1c338ebad78e
      - Subscription: Redis Pub/Sub를 통해 실시간 이벤트 브로드캐스트
      - Redis Storage에서 데이터 조회/저장
   4. Consumer가 이벤트를 읽어 DynamoDB에 데이터 저장
-  5. 클라이언트는 Subscription을 구독하고, 서버에서 발행된 메시지를 실시간 수신
-  6. 화면에 실시간 업데이트 (채팅 메시지, 타이핑 상태, 방 생성)
+  5. Consumer가 이벤트를 읽어 Elasticsearch에 색인
+  6. 클라이언트는 Subscription을 구독하고, 서버에서 발행된 메시지를 실시간 수신
+  7. 화면에 실시간 업데이트 (채팅 메시지, 타이핑 상태, 방 생성)
 
 ### 📡 Communication Diagram
 
@@ -174,6 +181,7 @@ classDiagram
   class Query {
     +users() : [String!]!
     +history(roomId: String!) : [Message!]!
+    +search(keyword: String!, userId: String!) : [Message!]!
   }
 
   class Mutation {
@@ -201,6 +209,117 @@ classDiagram
   Subscription --> SystemInput : uses
   Message --> Room : belongs to
   Query --> Message : get
+```
+
+## 📐 Sequence Diagram
+
+```mermaid
+sequenceDiagram
+  participant Web1
+  participant Web2
+  participant APIGateway@{ "type" : "queue" }
+  participant Servers@{ "type" : "collections" }
+  participant RedisStore@{ "type": "database" }
+  participant RedisPubSub@{ "type" : "queue" }
+  participant RedisStreams@{ "type" : "queue" }
+  participant DynamoDB@{ "type" : "database" }
+  participant Elasticsearch@{ "type" : "database"}
+
+  activate Servers
+
+  %% muation %%
+  rect rgba(155, 198, 142, 0.7)
+    Web1 ->> APIGateway: mutation setUser(id)
+    APIGateway ->> Servers: forward
+    Servers ->> RedisStore: store
+  end
+
+  %% 구독 %%
+  rect rgb(191, 223, 255, 0.7)
+    Web1 ->> APIGateway: subscription roomCreated(userId)
+    APIGateway ->> Servers:
+    Servers ->> RedisPubSub: subscribe
+  end
+
+  par For each room
+    rect rgba(155, 198, 142, 0.7)
+      Web1 ->> APIGateway: mutation createRoom(hostId, participants)
+      APIGateway ->> Servers:
+      Servers ->> RedisStore: [roomId, members]
+      Servers ->> RedisPubSub: publish roomCreated(room)
+      RedisPubSub ->> RedisPubSub: publish
+    end
+
+    opt Room created
+      rect rgba(155, 198, 142, 0.7)
+        Web2 ->> APIGateway: mutation joinRoom(roomId, userId)
+        APIGateway ->> Servers:
+        Servers ->> RedisPubSub: publish roomCreated(room)
+      end
+
+      rect rgb(233, 191, 201, 0.7)
+        Web2 ->> APIGateway: query history(roomId)
+        APIGateway ->> Servers:
+        Servers ->> DynamoDB: getMessageHistory()
+        DynamoDB -->> Servers: MessageHistory
+        Servers -->> APIGateway:
+        APIGateway -->> Web2: [messages]
+      end
+
+      rect rgb(191, 223, 255, 0.7)
+        Web1 ->> APIGateway: subscription message(roomId)
+        Web2 ->> APIGateway:
+        APIGateway ->> Servers:
+        Servers ->> RedisStreams: subscribe
+
+        Web1 ->> APIGateway: subscription typing(roomId)
+        Web1 ->> APIGateway: subscription system(input)
+        APIGateway ->> Servers:
+        Servers ->> RedisPubSub: subscribe
+      end
+
+      rect rgba(155, 198, 142, 0.7)
+        loop Multiple events
+          Web1 ->> APIGateway: mutation message(roomId, userId, content)
+          APIGateway ->> Servers:
+          Servers ->> RedisStreams: publish message(message)
+          RedisStreams ->> RedisStreams: publish
+
+          rect rgba(255,235,200,0.7)
+            loop Sync Consumer
+              RedisStreams ->> DynamoDB: store
+              RedisStreams ->> Elasticsearch: indexing
+            end
+          end
+
+          Web1 ->> APIGateway: mutation typing(roomId, userId)
+          APIGateway ->> Servers:
+          Servers ->> RedisPubSub: publish typing(ping)
+          RedisPubSub ->> RedisPubSub: publish
+        end
+      end
+    end
+
+  and Search
+    rect rgb(233, 191, 201, 0.7)
+      Web1 ->> APIGateway: query search(userId, keyword)
+      APIGateway ->> Servers:
+      Servers ->> Elasticsearch: searchByKeyword()
+      Elasticsearch -->> Servers: search result
+      Servers -->> APIGateway:
+      APIGateway -->> Web1: [messages]
+    end
+
+  and Sync GraphQL Subscriptions
+    rect rgba(255,235,200,0.7)
+      RedisStreams -->> Servers: asyncIterator
+      RedisPubSub -->> Servers: asyncIterator
+      Servers -->> APIGateway: push
+      APIGateway -->> Web1: [roomCreated| message | typing | system]
+      APIGateway -->> Web2:
+    end
+  end
+  deactivate Servers
 ```
 
 ## 📂 폴더 구조
@@ -235,11 +354,12 @@ Chat-Service
 
 ## 🗂️ 서브 프로젝트
 
-| 프로젝트               | 저장소                                                                            | 설명                                  | 브랜치/버전       |
-| ---------------------- | --------------------------------------------------------------------------------- | ------------------------------------- | ----------------- |
-| Backend                | https://github.com/NarciSource/Chat-Service--Backend/tree/graphql                 | GraphQL + Redis 기반 실시간 채팅 서버 | graphql / v2.2.0  |
-| Frontend               | https://github.com/NarciSource/Chat-Service--Frontend/tree/graphql                | Vue + Vite 클라이언트                 | graphql / v2.1.0  |
-| stream-dynamo-consumer | https://github.com/NarciSource/Chat-GraphQL/tree/consumers/stream-dynamo-consumer | Redis-Streams에서 DynamoDB로 동기화   | consumer / v1.1.0 |
+| 프로젝트  | 저장소                                                                                                     | 설명                                              | 브랜치/버전      |
+| --------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------- | ---------------- |
+| Backend   | [/Chat-Service--Backend/tree/graphql](https://github.com/NarciSource/Chat-Service--Backend/tree/graphql)   | GraphQL + Redis 기반 실시간 채팅 서버             | graphql / v2.3.0 |
+| Frontend  | [/Chat-Service--Frontend/tree/graphql](https://github.com/NarciSource/Chat-Service--Frontend/tree/graphql) | Vue + Vite 클라이언트                             | graphql / v2.2.0 |
+| Consumers | [/Chat-GraphQL/tree/consumers](https://github.com/NarciSource/Chat-GraphQL/tree/consumers)                 | Redis-Streams에서 DynamoDB/Elasticsearch로 동기화 | main / v2.0.0    |
+| Infra     | [/Chat-GraphQL/tree/infra](https://github.com/NarciSource/Chat-GraphQL/tree/infra)                         | 인프라 정의                                       | main / v1.3.0    |
 
 ## 🚀 실행 방법
 
@@ -253,10 +373,11 @@ $ docker-compose up -d
 
 ## 🖥️ 접속 안내
 
-| 환경                 | URL                              |
-| -------------------- | -------------------------------- |
-| web                  | <http://localhost:80>            |
-| server healthcheck   | <http://localhost:3000>          |
-| graphql schema       | <http://localhost:3000/voyager>⁠ |
-| graphql playground   | <http://localhost:3000/graphql>⁠ |
-| api gateway 대시보드 | <http://localhost:3002>          |
+| 환경                   | URL                              |
+| ---------------------- | -------------------------------- |
+| web                    | <http://localhost:80>            |
+| server healthcheck     | <http://localhost:3000>          |
+| graphql schema         | <http://localhost:3000/voyager>⁠ |
+| graphql playground     | <http://localhost:3000/graphql>⁠ |
+| api gateway 대시보드   | <http://localhost:3002>          |
+| elasticsearch 대시보드 | <http://localhost:5601>          |
